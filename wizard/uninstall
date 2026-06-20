@@ -1,0 +1,43 @@
+[
+    {
+        "stepTitle": "卸载确认",
+        "items": [
+            {
+                "type": "tips",
+                "helpText": "请选择卸载时的数据处理方式："
+            },
+            {
+                "type": "radio",
+                "field": "wizard_keep_data",
+                "label": "数据保留选项",
+                "options": [
+                    {
+                        "label": "保留数据文件",
+                        "value": "yes"
+                    },
+                    {
+                        "label": "彻底删除所有数据",
+                        "value": "no"
+                    }
+                ],
+                "initValue": "yes"
+            },
+            {
+                "type": "radio",
+                "field": "wizard_keep_config",
+                "label": "配置保留选项",
+                "options": [
+                    {
+                        "label": "保留配置文件",
+                        "value": "yes"
+                    },
+                    {
+                        "label": "恢复默认配置",
+                        "value": "no"
+                    }
+                ],
+                "initValue": "yes"
+            }
+        ]
+    }
+]

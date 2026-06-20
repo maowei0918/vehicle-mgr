@@ -1,0 +1,16 @@
+app.tgz
+app.tgz.sha256
+*.fpk
+__pycache__/
+*.pyc
+.eggs/
+*.egg-info/
+.Python/
+env/
+venv/
+.DS_Store
+tmp/
+.pawgit/
+app/Python/
+app/pylib/
+程序/

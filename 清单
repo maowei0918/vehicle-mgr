@@ -1,0 +1,15 @@
+appname               = vehicle-mgr
+version               = 1.0.0
+display_name          = 车辆管理系统
+desc                  = 车辆管理系统，支持车辆档案、日检记录、维修记录、人员分组管理。<br>配套微信小程序使用，提供 Web 管理后台。
+platform              = arm
+source                = thirdparty
+maintainer            = 自部署
+maintainer_url        = 
+distributor           = 自部署
+distributor_url       = 
+os_min_version        = 0.9.0
+desktop_uidir         = ui
+desktop_applaunchname = vehicle-mgr.Application
+service_port          = 8700
+checkport             = true

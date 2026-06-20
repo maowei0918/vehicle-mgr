@@ -1,0 +1,26 @@
+#!/bin/sh
+# 卸载后回调 - 根据用户选择清理数据
+
+# 默认路径
+DATA_DIR="${TRIM_PKGVAR:-/vol1/@appdata/vehicle-mgr}"
+CONF_DIR="${TRIM_APPCONF:-/vol1/@appconf/vehicle-mgr}"
+META_DIR="${TRIM_APPMETA:-/vol1/@appmeta/vehicle-mgr}"
+
+# 是否保留数据文件（来自卸载向导）
+if [ "$wizard_keep_data" = "no" ] || [ "$wizard_keep_data" = "false" ]; then
+    echo "正在删除数据目录: $DATA_DIR"
+    rm -rf "$DATA_DIR"
+fi
+
+# 是否保留配置文件
+if [ "$wizard_keep_config" = "no" ] || [ "$wizard_keep_config" = "false" ]; then
+    echo "正在删除配置目录: $CONF_DIR"
+    rm -rf "$CONF_DIR"
+fi
+
+# 清理 meta 目录（系统不自动删除）
+if [ -d "$META_DIR" ]; then
+    rm -rf "$META_DIR"
+fi
+
+exit 0
