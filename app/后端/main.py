@@ -43,7 +43,7 @@ app.mount("/uploads", StaticFiles(directory=str(UPLOAD_DIR)), name="uploads")
 app.mount("/admin", StaticFiles(directory=str(Path(__file__).resolve().parent / "webadmin"), html=True), name="admin")
 
 # 注册路由
-from routers import auth, group_user, vehicle, inspection, repair, settings, contract_part, contract, repair_flow, operation_log, role, ocr
+from routers import auth, group_user, vehicle, inspection, repair, settings, contract_part, contract, repair_flow, operation_log, role, ocr, backup
 app.include_router(auth.router)
 app.include_router(group_user.router)
 app.include_router(vehicle.router)
@@ -56,6 +56,7 @@ app.include_router(repair_flow.router)
 app.include_router(operation_log.router)
 app.include_router(role.router)
 app.include_router(ocr.router)
+app.include_router(backup.router)
 
 
 @app.get("/api/health")
