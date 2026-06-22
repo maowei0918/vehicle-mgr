@@ -7,6 +7,7 @@ from sqlalchemy.orm import selectinload
 from pydantic import BaseModel
 from database import get_db
 from models.user import Group, User
+from models.role import Role
 from services.auth import hash_password, get_current_user, require_role
 from services.operation_log import log_operation
 from services.permissions import scope_query
@@ -103,13 +104,14 @@ class UserReq(BaseModel):
 
 @router.get("/users")
 async def list_users(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    query = select(User).order_by(User.id)
+    query = select(User).options(selectinload(User.group), selectinload(User.role_obj)).order_by(User.id)
     query = await scope_query(query, user, User)
     result = await db.execute(query)
     users = result.scalars().all()
     return [{
         "id": u.id, "username": u.username, "name": u.name, "phone": u.phone,
-        "role": u.role, "role_id": u.role_id, "group_id": u.group_id, "is_active": u.is_active,
+        "role": u.role, "role_id": u.role_id, "role_name": u.role_obj.display_name if u.role_obj else u.role,
+        "group_id": u.group_id, "is_active": u.is_active,
     } for u in users]
 
 
@@ -124,6 +126,11 @@ async def create_user(req: UserReq, db: AsyncSession = Depends(get_db),
         req.group_id = user.group_id  # 只能创建自己组的成员
     if req.role not in ("admin", "fleet_manager", "repair_shop", "driver"):
         req.role = "driver"
+    # 如果传了 role_id 则根据角色对象设 role
+    if req.role_id is not None:
+        role_obj = await db.get(Role, req.role_id)
+        if role_obj:
+            req.role = role_obj.name
     exist = await db.execute(select(User).where(User.username == req.username))
     if exist.first():
         raise HTTPException(400, "用户名已存在")

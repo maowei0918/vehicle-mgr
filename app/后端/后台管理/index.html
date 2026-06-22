@@ -182,7 +182,7 @@ async function loadUsers() {
           <tr>
             <td>${u.username}</td>
             <td>${u.name}</td>
-            <td><span class="tag tag-${u.role}">${roleName(u.role)}</span></td>
+            <td><span class="tag tag-${u.role}">${u.role_name || roleName(u.role)}</span></td>
             <td>${gmap[u.group_id] || '-'}</td>
             <td>${u.phone || '-'}</td>
             <td>
@@ -201,7 +201,10 @@ function roleName(r) {
 }
 
 async function showUserForm() {
-  const groups = await api('GET', '/api/groups');
+  const [groups, roles] = await Promise.all([
+    api('GET', '/api/groups'),
+    api('GET', '/api/roles/simple'),
+  ]);
   const html = `
     <div class="modal" id="user-modal">
       <div class="modal-content">
@@ -211,10 +214,7 @@ async function showUserForm() {
         <div class="form-group"><label>密码</label><input id="f-pass" value="123456" /></div>
         <div class="row">
           <div class="form-group"><label>角色</label><select id="f-role">
-            <option value="driver">司机</option>
-            <option value="fleet_manager">车管员</option>
-            <option value="repair_shop">汽修厂</option>
-            <option value="admin">管理员</option>
+            ${roles.map(r => `<option value="${r.id}">${r.display_name || r.name}</option>`).join('')}
           </select></div>
           <div class="form-group"><label>分组</label><select id="f-group">
             <option value="">无</option>
@@ -235,11 +235,12 @@ async function showUserForm() {
 }
 
 async function doAddUser() {
+  const roleVal = document.getElementById('f-role').value;
   const data = {
     username: document.getElementById('f-username').value,
     name: document.getElementById('f-name').value,
     password: document.getElementById('f-pass').value,
-    role: document.getElementById('f-role').value,
+    role_id: parseInt(roleVal) || null,
     group_id: parseInt(document.getElementById('f-group').value) || null,
     phone: document.getElementById('f-phone').value,
   };
