@@ -460,6 +460,9 @@ async function settings(el) {
         <h4 style="margin-top:0;">⏰ 自动备份（全量）</h4>
         <p style="color:#888;font-size:12px;">定时备份整个数据库+照片，文件名为 <code>auto-backup-时间.tar.gz</code>。</p>
         <div class="row">
+          <div class="form-group"><label>备份目录</label><input id="s-bak-dir" value="${s.BACKUP_DIR || '/vol2/1000/AI/车辆管理-备份'}" style="width:280px;" placeholder="填写完整路径，如 /vol2/1000/backups" /></div>
+        </div>
+        <div class="row">
           <div class="form-group"><label>备份间隔(小时)</label><input id="s-bak-interval" value="${s.BACKUP_INTERVAL_HOURS || '24'}" style="width:80px;" /></div>
           <div class="form-group"><label>保留最近(个)</label><input id="s-bak-retention" value="${s.BACKUP_RETENTION || '7'}" style="width:80px;" /></div>
           <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
@@ -559,6 +562,7 @@ async function saveSettings() {
 
 async function saveBackupSettings() {
   try {
+    await api('PUT', '/api/settings', { key: 'BACKUP_DIR', value: document.getElementById('s-bak-dir').value });
     await api('PUT', '/api/settings', { key: 'BACKUP_INTERVAL_HOURS', value: document.getElementById('s-bak-interval').value });
     await api('PUT', '/api/settings', { key: 'BACKUP_RETENTION', value: document.getElementById('s-bak-retention').value });
     toast('备份设置已保存，重启后生效');

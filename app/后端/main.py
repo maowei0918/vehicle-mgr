@@ -37,7 +37,7 @@ async def lifespan(app: FastAPI):
             # 尝试从 settings 模块读取最新设置（如果已注册则路由会处理）
             return settings_cache
 
-        start_scheduler(DATA_DIR, DB_PATH, UPLOAD_DIR, get_settings)
+        start_scheduler(DATA_DIR, DB_PATH, UPLOAD_DIR, BACKUP_DIR, get_settings)
         logging.info("自动备份调度器已启动")
     except Exception as e:
         logging.warning(f"自动备份调度器启动失败: {e}")
