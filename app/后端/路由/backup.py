@@ -107,7 +107,7 @@ async def delete_backup(filename: str, user: User = Depends(require_role("admin"
 @router.post("/trigger-auto")
 async def trigger_auto_backup(user: User = Depends(require_role("admin"))):
     """手动触发一次自动备份"""
-    from backup_scheduler import run_backup, clean_old_backups
+    from backup_scheduler import run_full_backup as run_backup, clean_old_backups
     data_dir, db_path, upload_dir, backup_dir = get_data_paths()
     result = await run_backup(data_dir, db_path, upload_dir)
     if result:

@@ -50,7 +50,10 @@ OCR_ENABLED = os.getenv("OCR_ENABLED", "true").lower() == "true"
 # ---------- 里程预警 ----------
 MILEAGE_THRESHOLD = int(os.getenv("MILEAGE_THRESHOLD", "5000"))
 
-# ---------- 自动备份 ----------
+# ---------- 定期增量备份 ----------
+REGULAR_BACKUP_ENABLED = os.getenv("REGULAR_BACKUP_ENABLED", "true").lower() == "true"
+REGULAR_BACKUP_INTERVAL_HOURS = int(os.getenv("REGULAR_BACKUP_INTERVAL_HOURS", "168"))
+REGULAR_BACKUP_DAYS = int(os.getenv("REGULAR_BACKUP_DAYS", "30"))
 BACKUP_INTERVAL_HOURS = int(os.getenv("BACKUP_INTERVAL_HOURS", "24"))
 BACKUP_RETENTION = int(os.getenv("BACKUP_RETENTION", "7"))
 BACKUP_DIR = Path(os.getenv("BACKUP_DIR", str(DATA_DIR / "backups")))
