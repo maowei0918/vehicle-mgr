@@ -3,6 +3,7 @@ import io
 from fastapi import APIRouter, Depends, HTTPException, UploadFile, File
 from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy import select
+from sqlalchemy.orm import selectinload
 from pydantic import BaseModel
 from database import get_db
 from models.user import Group, User
@@ -23,7 +24,9 @@ class GroupReq(BaseModel):
 
 @router.get("/groups")
 async def list_groups(db: AsyncSession = Depends(get_db), user: User = Depends(get_current_user)):
-    result = await db.execute(select(Group).order_by(Group.id))
+    result = await db.execute(
+        select(Group).options(selectinload(Group.children), selectinload(Group.users)).order_by(Group.id)
+    )
     groups = result.scalars().all()
     return [{
         "id": g.id, "name": g.name, "desc": g.desc,
