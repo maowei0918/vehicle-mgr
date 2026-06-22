@@ -21,7 +21,7 @@ from services.auth import get_current_user, require_role
 
 logger = logging.getLogger("regular_backup")
 REGULAR_MAGIC = "vehicle-mgr-regular-v1"
-VERSION = "14.0.0"
+VERSION = "1.0.0"
 
 # ── 表配置 ──────────────────────────────────────────────
 # (model_class, date_field, 是否参考表)

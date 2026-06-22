@@ -9,7 +9,7 @@ from database import get_db, engine, DATABASE_URL
 from models.user import User
 from services.auth import get_current_user, require_role
 
-VERSION = "14.0.0"
+VERSION = "1.0.0"
 BACKUP_MAGIC = "vehicle-mgr-backup-v1"
 
 router = APIRouter(prefix="/api/backup", tags=["备份与恢复"])
