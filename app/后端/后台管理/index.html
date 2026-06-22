@@ -456,15 +456,25 @@ async function settings(el) {
         <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:12px;">💾 保存设置</button>
       </div>
       <div class="card" style="margin-top:16px;">
-        <h4 style="margin-top:0;">💾 数据备份与恢复</h4>
-        <p style="color:#888;font-size:13px;">备份包含数据库和照片，可在 ARM/x86 设备间互用。</p>
-        <div style="display:flex;gap:8px;flex-wrap:wrap;">
-          <button class="btn btn-primary" onclick="doBackup()">📥 导出备份</button>
+        <h4 style="margin-top:0;">⏰ 自动备份</h4>
+        <div class="row">
+          <div class="form-group"><label>备份间隔(小时)</label><input id="s-bak-interval" value="${s.BACKUP_INTERVAL_HOURS || '24'}" style="width:80px;" /></div>
+          <div class="form-group"><label>保留最近(个)</label><input id="s-bak-retention" value="${s.BACKUP_RETENTION || '7'}" style="width:80px;" /></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+            <button class="btn btn-secondary" onclick="saveBackupSettings()" style="font-size:12px;">💾 保存</button>
+          </div>
+        </div>
+        <div id="backup-files" style="margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="doBackup()">📥 下载备份</button>
           <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 导入备份</button>
           <input type="file" id="import-file" accept=".tar.gz,.tgz" style="display:none" onchange="doImport(this)" />
+          <button class="btn btn-secondary" onclick="doAutoBackup()">🔄 立即执行自动备份</button>
         </div>
         <div id="backup-status" style="margin-top:8px;font-size:13px;"></div>
       </div>
+    `;
+    loadBackupList();
       </div>
     `;
   } catch(e) { el.innerHTML = `<div class="card"><p>加载失败: ${e.message}</p></div>`; }
@@ -486,11 +496,59 @@ async function saveSettings() {
   } catch(e) { toast('保存失败: ' + e.message, true); }
 }
 
+async function saveBackupSettings() {
+  try {
+    await api('PUT', '/api/settings', { key: 'BACKUP_INTERVAL_HOURS', value: document.getElementById('s-bak-interval').value });
+    await api('PUT', '/api/settings', { key: 'BACKUP_RETENTION', value: document.getElementById('s-bak-retention').value });
+    toast('备份设置已保存，重启后生效');
+  } catch(e) { toast('保存失败: ' + e.message, true); }
+}
+
+async function loadBackupList() {
+  try {
+    const d = await api('GET', '/api/backup/list');
+    if (!d.backups || d.backups.length === 0) {
+      document.getElementById('backup-files').innerHTML = '<p style="color:#888;font-size:13px;">暂无自动备份文件</p>';
+      return;
+    }
+    let html = '<p style="color:#888;font-size:13px;margin-bottom:4px;">已存在的备份文件:</p><table class="table"><tr><th>文件名</th><th>大小</th><th>时间</th><th></th></tr>';
+    for (const f of d.backups.slice(0, 20)) {
+      const sz = f.size > 1048576 ? (f.size/1048576).toFixed(1)+' MB' : (f.size/1024).toFixed(0)+' KB';
+      const t = new Date(f.mtime).toLocaleString();
+      html += `<tr><td>${f.name}</td><td>${sz}</td><td>${t}</td>`;
+      html += `<td><button class="btn btn-secondary" style="font-size:11px;padding:2px 6px;" onclick="downloadBackup('${f.name}')">📥</button> `;
+      html += `<button class="btn btn-danger" style="font-size:11px;padding:2px 6px;" onclick="deleteBackup('${f.name}')">🗑️</button></td></tr>`;
+    }
+    html += '</table>';
+    document.getElementById('backup-files').innerHTML = html;
+  } catch(e) { document.getElementById('backup-files').innerHTML = '<p style="color:#888;">加载失败</p>'; }
+}
+
+async function downloadBackup(name) {
+  const token = localStorage.getItem('token');
+  const r = await fetch('/api/backup/download/' + encodeURIComponent(name), {
+    headers: { 'Authorization': 'Bearer ' + token }
+  });
+  if (!r.ok) { toast('下载失败', true); return; }
+  const blob = await r.blob();
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href = url; a.download = name; a.click();
+  URL.revokeObjectURL(url);
+}
+
+async function deleteBackup(name) {
+  if (!confirm('确定删除备份 ' + name + '？')) return;
+  try {
+    await api('POST', '/api/backup/delete/' + encodeURIComponent(name));
+    toast('已删除');
+    loadBackupList();
+  } catch(e) { toast('删除失败: ' + e.message, true); }
+}
+
 async function doBackup() {
   const st = document.getElementById('backup-status');
   st.innerHTML = '⏳ 正在生成备份...';
   try {
-    // Use fetch directly for binary download
     const token = localStorage.getItem('token');
     const r = await fetch('/api/backup/create', {
       headers: { 'Authorization': 'Bearer ' + token }
@@ -500,10 +558,22 @@ async function doBackup() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = r.headers.get('Content-Disposition')?.match(/filename="?(.+?)"?$/)?.[1] || 'backup.tar.gz';
+    const cd = r.headers.get('Content-Disposition') || '';
+    const m = cd.match(/filename="?(.+?)"?$/);
+    a.download = m ? m[1] : 'backup.tar.gz';
     a.click();
     URL.revokeObjectURL(url);
     st.innerHTML = '✅ 备份已下载';
+  } catch(e) { st.innerHTML = '❌ ' + e.message; }
+}
+
+async function doAutoBackup() {
+  const st = document.getElementById('backup-status');
+  st.innerHTML = '⏳ 正在执行自动备份...';
+  try {
+    const d = await api('POST', '/api/backup/trigger-auto');
+    st.innerHTML = '✅ ' + d.message;
+    loadBackupList();
   } catch(e) { st.innerHTML = '❌ ' + e.message; }
 }
 

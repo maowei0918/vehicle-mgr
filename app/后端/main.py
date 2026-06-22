@@ -15,7 +15,7 @@ from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
 
 from database import init_db
-from config import UPLOAD_DIR, HOST, PORT
+from config import UPLOAD_DIR, DATA_DIR, DB_PATH, BACKUP_DIR, BACKUP_INTERVAL_HOURS, BACKUP_RETENTION, HOST, PORT
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name)s: %(message)s")
 
@@ -24,6 +24,23 @@ logging.basicConfig(level=logging.INFO, format="%(asctime)s %(levelname)s %(name
 async def lifespan(app: FastAPI):
     await init_db()
     logging.info("数据库初始化完成")
+    # 启动自动备份调度器
+    try:
+        from backup_scheduler import start_scheduler
+
+        settings_cache = {
+            "BACKUP_INTERVAL_HOURS": str(BACKUP_INTERVAL_HOURS),
+            "BACKUP_RETENTION": str(BACKUP_RETENTION),
+        }
+
+        def get_settings():
+            # 尝试从 settings 模块读取最新设置（如果已注册则路由会处理）
+            return settings_cache
+
+        start_scheduler(DATA_DIR, DB_PATH, UPLOAD_DIR, get_settings)
+        logging.info("自动备份调度器已启动")
+    except Exception as e:
+        logging.warning(f"自动备份调度器启动失败: {e}")
     yield
 
 
