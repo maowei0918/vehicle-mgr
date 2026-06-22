@@ -1,5 +1,5 @@
 appname               = vehicle-mgr
-version               = 14.0.0
+version               = 1.0.6
 display_name          = 车辆管理系统
 desc                  = 车辆管理系统，支持车辆档案、日检记录、维修记录、人员分组管理。<br>配套微信小程序使用，提供 Web 管理后台。
 platform              = arm
@@ -13,4 +13,4 @@ service_port          = 8700
 checkport             = true
 desktop_uidir         = ui
 desktop_applaunchname = vehicle-mgr.Application
-checksum              = c55f5472f081ec9c8744415571df1f27c249677576a1a79a012961a97bee31d0
+checksum              = 8b5275b48e50e755f50be1e0cf5de1080f3c2f5335c6a7205839622d2e41443f

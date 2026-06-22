@@ -3,485 +3,1220 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>车辆管理系统</title>
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🚗</text></svg>">
+<title id="page-title">车辆管理系统</title>
 <style>
-* { margin: 0; padding: 0; box-sizing: border-box; }
-body { font-family: -apple-system, "Microsoft YaHei", sans-serif; background: #0F0F19; color: #E0E0E0; min-height: 100vh; display: flex; }
-.sidebar { width: 200px; background: #1A1A2E; padding: 20px 0; flex-shrink: 0; }
-.sidebar h2 { padding: 0 20px 20px; color: #E82337; font-size: 18px; border-bottom: 1px solid #2A2A3E; }
-.sidebar a { display: block; padding: 12px 20px; color: #888; text-decoration: none; cursor: pointer; }
-.sidebar a:hover, .sidebar a.active { color: #fff; background: #2A2A3E; }
-.main { flex: 1; padding: 24px; overflow-y: auto; max-height: 100vh; }
-.card { background: #1A1A2E; border-radius: 12px; padding: 20px; margin-bottom: 16px; }
-table { width: 100%; border-collapse: collapse; }
-th, td { padding: 10px 12px; text-align: left; border-bottom: 1px solid #2A2A3E; font-size: 14px; }
-th { color: #888; font-weight: normal; }
-tr:hover { background: #2A2A3E; }
-.btn { display: inline-block; padding: 6px 16px; border-radius: 6px; border: none; cursor: pointer; font-size: 13px; margin: 2px; }
-.btn-primary { background: #E82337; color: #fff; }
-.btn-secondary { background: #2A2A3E; color: #E0E0E0; border: 1px solid #3A3A50; }
-.btn-danger { background: #B71C1C; color: #fff; }
-.btn-sm { padding: 4px 10px; font-size: 12px; }
-input, select { background: #2A2A3E; border: 1px solid #3A3A50; color: #E0E0E0; padding: 8px 12px; border-radius: 6px; font-size: 14px; width: 100%; box-sizing: border-box; }
-input:focus { outline: none; border-color: #E82337; }
-.form-group { margin-bottom: 12px; }
-.form-group label { display: block; font-size: 13px; color: #888; margin-bottom: 4px; }
-.page-title { font-size: 22px; font-weight: bold; margin-bottom: 16px; }
-.tag { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 12px; }
-.tag-admin { background: #1A237E; color: #7986CB; }
-.tag-fleet_manager { background: #004466; color: #4FC3F7; }
-.tag-repair_shop { background: #334400; color: #8BC34A; }
-.tag-driver { background: #665500; color: #FFD700; }
-.hidden { display: none !important; }
-.modal { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.6); display: flex; align-items: center; justify-content: center; z-index: 100; }
-.modal-content { background: #1A1A2E; border-radius: 12px; padding: 24px; width: 420px; max-width: 90vw; }
-.modal-content h3 { margin-bottom: 16px; }
-.toast { position: fixed; top: 20px; right: 20px; background: #1B5E20; color: #fff; padding: 12px 20px; border-radius: 8px; z-index: 200; font-size: 14px; }
-.toast.error { background: #B71C1C; }
-.row { display: flex; gap: 12px; }
-.row > * { flex: 1; }
-@media (max-width: 768px) { .sidebar { display: none; } }
-</style>
-</head>
-<body>
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family:-apple-system,"Microsoft YaHei",sans-serif; background:#0F0F19; color:#E0E0E0; min-height:100vh; display:flex; }
+.sidebar { width:200px; background:#1A1A2E; padding:20px 0; flex-shrink:0; overflow-y:auto; }
+.sidebar h2 { padding:0 20px 20px; color:#E82337; font-size:18px; border-bottom:1px solid #2A2A3E; }
+.sidebar a { display:block; padding:12px 20px; color:#888; text-decoration:none; cursor:pointer; font-size:14px; }
+.sidebar a:hover,.sidebar a.active { color:#fff; background:#2A2A3E; }
+.main { flex:1; padding:24px; overflow-y:auto; max-height:100vh; }
+.card { background:#1A1A2E; border-radius:12px; padding:20px; margin-bottom:16px; }
+table { width:100%; border-collapse:collapse; }
+th,td { padding:10px 12px; text-align:left; border-bottom:1px solid #2A2A3E; font-size:14px; }
+th { color:#888; font-weight:normal; }
+tr:hover { background:#2A2A3E; }
+.btn { display:inline-block; padding:6px 16px; border-radius:6px; border:none; cursor:pointer; font-size:13px; margin:2px; }
+.btn-primary { background:#E82337; color:#fff; }
+.btn-secondary { background:#2A2A3E; color:#E0E0E0; border:1px solid #3A3A50; }
+.btn-danger { background:#B71C1C; color:#fff; }
+.btn-success { background:#1B5E20; color:#fff; }
+.btn-sm { padding:4px 10px; font-size:12px; }
+input,select,textarea { background:#2A2A3E; border:1px solid #3A3A50; color:#E0E0E0; padding:8px 12px; border-radius:6px; font-size:14px; width:100%; box-sizing:border-box; }
+input:focus,select:focus { outline:none; border-color:#E82337; }
+.form-group { margin-bottom:12px; }
+.form-group label { display:block; font-size:13px; color:#888; margin-bottom:4px; }
+.page-title { font-size:22px; font-weight:bold; margin-bottom:16px; }
+.tag { display:inline-block; padding:2px 8px; border-radius:4px; font-size:12px; }
+.tag-admin { background:#1A237E; color:#7986CB; }
+.tag-fleet_manager { background:#004466; color:#4FC3F7; }
+.tag-repair_shop { background:#334400; color:#8BC34A; }
+.tag-driver { background:#665500; color:#FFD700; }
+.tag-dispatched { background:#665500; color:#FFD700; }
+.tag-accepted { background:#004466; color:#4FC3F7; }
+.tag-completed { background:#1A237E; color:#7986CB; }
+.tag-verified { background:#1B5E20; color:#81C784; }
+.hidden { display:none !important; }
+.modal-overlay { position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.6); display:flex; align-items:center; justify-content:center; z-index:100; }
+.modal-content { background:#1A1A2E; border-radius:12px; padding:24px; width:500px; max-width:90vw; max-height:80vh; overflow-y:auto; }
+.modal-content h3 { margin-bottom:16px; }
+.toast { position:fixed; top:20px; right:20px; background:#1B5E20; color:#fff; padding:12px 20px; border-radius:8px; z-index:200; font-size:14px; }
+.toast.error { background:#B71C1C; }
+.row { display:flex; gap:12px; }
+.row > * { flex:1; }
+.filter-bar { display:flex; gap:12px; align-items:flex-end; flex-wrap:wrap; margin-bottom:16px; }
+.filter-bar .form-group { margin-bottom:0; min-width:140px; }
+.toolbar { display:flex; gap:8px; align-items:center; flex-wrap:wrap; margin-bottom:16px; }
+.pagination { display:flex; align-items:center; gap:12px; justify-content:center; margin-top:12px; color:#888; font-size:13px; }
+@media (max-width:768px) { .sidebar { display:none; } .row { flex-direction:column; } }
+</style></head><body>
 
-<!-- 登录页 -->
 <div id="page-login" style="width:100%;display:flex;align-items:center;justify-content:center;">
   <div class="card" style="width:360px;padding:40px;">
-    <h2 style="text-align:center;color:#E82337;margin-bottom:24px;">🚗 车辆管理系统</h2>
-    <div class="form-group">
-      <label>用户名</label>
-      <input id="login-user" value="admin" />
-    </div>
-    <div class="form-group">
-      <label>密码</label>
-      <input id="login-pass" type="password" value="admin123" onkeydown="if(event.key==='Enter')login()" />
-    </div>
+    <h2 style="text-align:center;color:#E82337;margin-bottom:24px;">🚗 车辆管理系统 v0.0.1-beta.7</h2>
+    <div class="form-group"><label>用户名</label><input id="login-user" value="admin" /></div>
+    <div class="form-group"><label>密码</label><input id="login-pass" type="password" value="admin123" onkeydown="if(event.key==='Enter')login()" /></div>
     <button class="btn btn-primary" style="width:100%;padding:10px;font-size:15px;margin-top:8px;" onclick="login()">登录</button>
     <p style="text-align:center;color:#555;font-size:12px;margin-top:16px;">默认账号: admin / admin123</p>
   </div>
 </div>
 
-<!-- 主界面 -->
-<div id="page-main" class="hidden" style="width:100%;display:flex;">
-  <div class="sidebar">
-    <h2>🚗 车辆管理</h2>
-    <a class="active" onclick="switchPage('dashboard',this)">📊 概况</a>
-    <a onclick="switchPage('users',this)">👥 用户管理</a>
-    <a onclick="switchPage('groups',this)">📁 分组管理</a>
-    <a onclick="switchPage('vehicles',this)">🚙 车辆管理</a>
-    <a onclick="switchPage('settings',this)">⚙️ 系统设置</a>
-    <div style="border-top:1px solid #2A2A3E;margin-top:20px;padding-top:20px;">
-      <a onclick="logout()">🚪 退出登录</a>
-    </div>
-  </div>
-
-  <div class="main" id="page-content"></div>
-</div>
+<div id="page-main"></div>
 
 <script>
-// ========== API ==========
-const BASE = window.location.origin;
 let TOKEN = '';
+let R = null;
+let P = [];
+const BASE = window.location.origin;
+
+function hasPerm(key) { return P && P.includes(key); }
 
 async function api(method, path, body) {
   const opt = { method, headers: { 'Authorization': 'Bearer ' + TOKEN } };
   if (body) { opt.headers['Content-Type'] = 'application/json'; opt.body = JSON.stringify(body); }
   const r = await fetch(BASE + path, opt);
-  if (r.status === 401) { alert('登录过期，请重新登录'); logout(); return null; }
+  if (r.status === 401) { toast('登录过期', true); logout(); return null; }
+  if (r.status === 204) return null;
   if (!r.ok) { const d = await r.json().catch(()=>({})); throw new Error(d.detail || r.statusText); }
+  const ct = r.headers.get('content-type') || '';
+  if (ct.includes('text/csv')) { const blob = await r.blob(); const a = document.createElement('a'); a.href = URL.createObjectURL(blob); return a; }
   return r.json();
 }
 
-// ========== 登录 ==========
-async function login() {
-  const user = document.getElementById('login-user').value;
-  const pass = document.getElementById('login-pass').value;
+async function downloadCSV(path, filename) {
   try {
-    const d = await api('POST', '/api/auth/login', { username: user, password: pass });
-    if (!d) return;
+    const r = await fetch(BASE + path, { headers: { 'Authorization': 'Bearer ' + TOKEN } });
+    if (!r.ok) throw new Error('导出失败');
+    const blob = await r.blob();
+    const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = filename; a.click();
+    toast('导出成功');
+  } catch(e) { toast('导出失败: ' + e.message, true); }
+}
+
+async function login() {
+  try {
+    const d = await fetch(BASE + '/api/auth/login', { method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ username: document.getElementById('login-user').value, password: document.getElementById('login-pass').value }) }).then(r => { if(!r.ok) throw new Error('登录失败'); return r.json(); });
     TOKEN = d.token;
-    document.getElementById('page-login').classList.add('hidden');
-    document.getElementById('page-main').classList.remove('hidden');
+    R = d.user;
+    P = d.user.permissions || [];
+    // 加载网站标题
+    fetch(BASE + '/api/settings/site-title').then(function(r){return r.json()}).then(function(d){if(d&&d.title){document.title=d.title;var t=document.getElementById('page-title');if(t)t.textContent=d.title;}}).catch(function(){});
+    document.getElementById('page-login').style.display = 'none';
+    var sidebarLinks = [
+      {id:'dashboard',icon:'📊',label:'概况',perm:''},
+      {id:'users',icon:'👥',label:'用户管理',perm:'user.view'},
+      {id:'groups',icon:'📁',label:'分组管理',perm:'group.view'},
+      {id:'vehicles',icon:'🚙',label:'车辆管理',perm:'vehicle.view'},
+      {id:'new_inspection',icon:'📋',label:'车辆日检',perm:'inspection.report'},
+      {id:'inspections',icon:'📋',label:'日检管理',perm:'inspection.view'},
+      {id:'repairs',icon:'🔧',label:'维修管理',perm:'repair.view'},
+      {id:'repair_flows',icon:'🔄',label:'维修流程',perm:'repair_flow.view'},
+      {id:'repair_workbench',icon:'🏪',label:'接单工作台',perm:'repair.view'},
+      {id:'contract',icon:'📦',label:'合同配件',perm:'contract.view'},
+      {id:'roles',icon:'🔐',label:'角色管理',perm:'user.edit'},
+      {id:'logs',icon:'📝',label:'操作日志',perm:'log.view'},
+      {id:'settings',icon:'⚙️',label:'系统设置',perm:'settings.edit'},
+    ];
+    var sideHtml = '<div class="sidebar"><h2>🚗 车辆管理</h2>';
+    for(var i=0;i<sidebarLinks.length;i++){
+      var l=sidebarLinks[i];
+      if(l.perm && !hasPerm(l.perm)) continue;
+      sideHtml += '<a onclick="switchPage(\''+l.id+'\',this)">'+l.icon+' '+l.label+'</a>';
+    }
+    sideHtml += '<div style="border-top:1px solid #2A2A3E;margin-top:20px;padding-top:20px;"><a onclick="logout()">🚪 退出登录</a></div></div><div class="main" id="page-content"></div>';
+    const pm = document.getElementById('page-main');
+    pm.innerHTML = sideHtml;
+    pm.style.display = 'flex';
+    // drawer
+    const style = document.createElement('style'); style.textContent = '.menu-toggle{display:none;position:fixed;top:12px;left:12px;z-index:1001;background:#E82337;color:#fff;border:none;border-radius:6px;padding:8px 12px;font-size:18px;cursor:pointer;}.sidebar-overlay{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.5);z-index:999;}.sidebar-drawer{display:none;position:fixed;top:0;left:0;width:260px;height:100%;background:#1A1A2E;z-index:1000;transform:translateX(-100%);transition:transform 0.3s ease;overflow-y:auto;padding:20px 0;}.sidebar-drawer.open{transform:translateX(0);}.sidebar-drawer h2{padding:0 20px 20px;color:#E82337;font-size:18px;border-bottom:1px solid #2A2A3E;}.sidebar-drawer a{display:block;padding:14px 20px;color:#888;text-decoration:none;cursor:pointer;font-size:15px;}.sidebar-drawer a:hover,.sidebar-drawer a.active{color:#fff;background:#2A2A3E;}@media(max-width:768px){.menu-toggle{display:block;}.sidebar{display:none;}.sidebar-overlay.show,.sidebar-drawer.open{display:block;}.main{padding:12px;padding-top:56px;}}'; document.head.appendChild(style);
+    const toggle = document.createElement('button'); toggle.className = 'menu-toggle'; toggle.textContent = '☰'; toggle.onclick = function(){ const d=document.querySelector('.sidebar-drawer'); const o=document.querySelector('.sidebar-overlay'); if(d&&o){d.classList.toggle('open');o.classList.toggle('show');} }; document.body.appendChild(toggle);
+    const overlay = document.createElement('div'); overlay.className = 'sidebar-overlay'; overlay.onclick = function(){ const d=document.querySelector('.sidebar-drawer'); const o=document.querySelector('.sidebar-overlay'); if(d&&o){d.classList.remove('open');o.classList.remove('show');} }; document.body.appendChild(overlay);
+    const drawer = document.createElement('div'); drawer.className = 'sidebar-drawer'; drawer.innerHTML = document.querySelector('.sidebar').innerHTML; drawer.querySelectorAll('a').forEach(function(a){ const orig=a.onclick; a.onclick=function(e){ if(orig) orig.call(this,e); const d=document.querySelector('.sidebar-drawer'); const o=document.querySelector('.sidebar-overlay'); if(d&&o){d.classList.remove('open');o.classList.remove('show');} }; }); document.body.appendChild(drawer);
     switchPage('dashboard');
-  } catch(e) { alert('登录失败: ' + e.message); }
+  } catch(e) { toast('登录失败: ' + e.message, true); }
 }
 
-function logout() {
-  TOKEN = '';
-  document.getElementById('page-login').classList.remove('hidden');
-  document.getElementById('page-main').classList.add('hidden');
-}
-
-// ========== 页面切换 ==========
-const pages = { dashboard, users, groups, vehicles, settings };
+function logout() { TOKEN = ''; document.getElementById('page-login').style.display = 'flex'; document.getElementById('page-main').innerHTML = ''; document.getElementById('page-main').style.display = 'none'; }
 
 function switchPage(name, el) {
   document.querySelectorAll('.sidebar a').forEach(a => a.classList.remove('active'));
   if (el) el.classList.add('active');
   const content = document.getElementById('page-content');
-  if (pages[name]) pages[name](content);
+  if (window['page_' + name]) window['page_' + name](content);
 }
 
-// ========== 概况 ==========
-async function dashboard(el) {
+function downloadTemplate(type) {
+  const urls = { users: '/api/users/template.xlsx', vehicles: '/api/vehicles/template.xlsx' };
+  const names = { users: 'user-import-template.xlsx', vehicles: 'vehicle-import-template.xlsx' };
+  window.open(BASE + urls[type], '_blank');
+  toast(`正在下载 ${names[type]}...`);
+}
+
+async function loadShopSelect(selId) {
+  try {
+    const r = await api('GET','/api/repairs/shops');
+    if (r && r.shops) {
+      const sel = document.getElementById(selId);
+      if (sel) {
+        const cur = sel.value;
+        sel.innerHTML = '<option value="">全部</option>' + r.shops.map(s => `<option value="${s}" ${cur===s?'selected':''}>${s}</option>`).join('');
+      }
+    }
+  } catch(e) { /* silent */ }
+}
+
+function downloadXLSX(url, filename) {
+  // 下载 xlsx 文件
+  const a = document.createElement('a');
+  a.href = BASE + url;
+  a.download = filename || 'export.xlsx';
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+}
+
+function roleName(r) { return ({ admin:'管理员', fleet_manager:'车管员', repair_shop:'汽修厂', driver:'司机' })[r] || r; }
+function statusName(s) { return ({ dispatched:'已派单', accepted:'已接单', completed:'已完成', verified:'已验收' })[s] || s; }
+function closeOverlay() { const m = document.querySelector('.modal-overlay'); if(m) m.remove(); }
+function toast(msg, isError) { const el = document.createElement('div'); el.className = 'toast' + (isError?' error':''); el.textContent = msg; document.body.appendChild(el); setTimeout(() => el.remove(), 3000); }
+
+// ====== 概况 ======
+async function page_dashboard(el) {
   el.innerHTML = '<div class="page-title">📊 概况</div><div class="card"><p>加载中...</p></div>';
   try {
-    const [users, vehs, grps] = await Promise.all([
-      api('GET', '/api/users'),
-      api('GET', '/api/vehicles'),
-      api('GET', '/api/groups'),
-    ]);
-    const admin = users.find(u => u.role === 'admin');
-    el.innerHTML = `
-      <div class="page-title">📊 概况</div>
+    const [users, vehs, grps] = await Promise.all([ api('GET','/api/users'), api('GET','/api/vehicles'), api('GET','/api/groups') ]);
+    if (!users || !vehs || !grps) return;
+    el.innerHTML = `<div class="page-title">📊 概况</div>
       <div style="display:flex;gap:16px;flex-wrap:wrap;">
         <div class="card" style="flex:1;min-width:150px;text-align:center;"><div style="font-size:36px;color:#E82337;">${users.length}</div><div style="font-size:14px;color:#888;">用户总数</div></div>
         <div class="card" style="flex:1;min-width:150px;text-align:center;"><div style="font-size:36px;color:#E82337;">${vehs.length}</div><div style="font-size:14px;color:#888;">车辆总数</div></div>
         <div class="card" style="flex:1;min-width:150px;text-align:center;"><div style="font-size:36px;color:#E82337;">${grps.length}</div><div style="font-size:14px;color:#888;">分组数</div></div>
       </div>
-      <div class="card" style="margin-top:16px;">
-        <h3 style="margin-bottom:12px;">快速操作</h3>
-        <button class="btn btn-primary" onclick="switchPage('users')">👥 管理用户</button>
-        <button class="btn btn-primary" style="margin-left:8px;" onclick="switchPage('vehicles')">🚙 管理车辆</button>
-        <button class="btn btn-primary" style="margin-left:8px;" onclick="switchPage('groups')">📁 管理分组</button>
-        <button class="btn btn-secondary" style="margin-left:8px;" onclick="switchPage('settings')">⚙️ 设置</button>
-      </div>
-      <div class="card"><h3>管理员信息</h3><p>当前登录: ${admin ? admin.name : 'admin'}</p><p>角色: 管理员</p></div>
-    `;
-  } catch(e) { el.innerHTML = `<div class="card"><p class="error">加载失败: ${e.message}</p></div>`; }
-}
-
-// ========== 用户管理 ==========
-async function users(el) {
-  const render = () => {
-    el.innerHTML = `
-      <div class="page-title">👥 用户管理</div>
-      <div class="card">
-        <button class="btn btn-primary" onclick="showUserForm()">+ 添加用户</button>
-      </div>
-      <div class="card" id="user-table-wrap"><p>加载中...</p></div>
-    `;
-    loadUsers();
-  };
-  el.render = render;
-  render();
-}
-
-async function loadUsers() {
-  try {
-    const list = await api('GET', '/api/users');
-    const groups = await api('GET', '/api/groups');
-    const gmap = {}; groups.forEach(g => gmap[g.id] = g.name);
-    const wrap = document.getElementById('user-table-wrap');
-    if (!wrap) return;
-    wrap.innerHTML = `
-      <table>
-        <tr><th>用户名</th><th>姓名</th><th>角色</th><th>分组</th><th>手机</th><th>操作</th></tr>
-        ${list.map(u => `
-          <tr>
-            <td>${u.username}</td>
-            <td>${u.name}</td>
-            <td><span class="tag tag-${u.role}">${roleName(u.role)}</span></td>
-            <td>${gmap[u.group_id] || '-'}</td>
-            <td>${u.phone || '-'}</td>
-            <td>
-              <button class="btn btn-danger btn-sm" onclick="deleteUser(${u.id})">删除</button>
-            </td>
-          </tr>
-        `).join('')}
-      </table>
-    `;
-  } catch(e) { toast('加载失败: ' + e.message, true); }
-}
-
-function roleName(r) {
-  const map = { admin: '管理员', fleet_manager: '车管员', repair_shop: '汽修厂', driver: '司机' };
-  return map[r] || r;
-}
-
-async function showUserForm() {
-  const groups = await api('GET', '/api/groups');
-  const html = `
-    <div class="modal" id="user-modal">
-      <div class="modal-content">
-        <h3>添加用户</h3>
-        <div class="form-group"><label>用户名</label><input id="f-username" /></div>
-        <div class="form-group"><label>姓名</label><input id="f-name" /></div>
-        <div class="form-group"><label>密码</label><input id="f-pass" value="123456" /></div>
-        <div class="row">
-          <div class="form-group"><label>角色</label><select id="f-role">
-            <option value="driver">司机</option>
-            <option value="fleet_manager">车管员</option>
-            <option value="repair_shop">汽修厂</option>
-            <option value="admin">管理员</option>
-          </select></div>
-          <div class="form-group"><label>分组</label><select id="f-group">
-            <option value="">无</option>
-            ${groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}
-          </select></div>
-        </div>
-        <div class="form-group"><label>手机</label><input id="f-phone" /></div>
-        <div style="text-align:right;margin-top:16px;">
-          <button class="btn btn-secondary" onclick="closeModal()">取消</button>
-          <button class="btn btn-primary" onclick="doAddUser()" style="margin-left:8px;">保存</button>
-        </div>
-      </div>
-    </div>
-  `;
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  document.body.appendChild(div.firstElementChild);
-}
-
-async function doAddUser() {
-  const data = {
-    username: document.getElementById('f-username').value,
-    name: document.getElementById('f-name').value,
-    password: document.getElementById('f-pass').value,
-    role: document.getElementById('f-role').value,
-    group_id: parseInt(document.getElementById('f-group').value) || null,
-    phone: document.getElementById('f-phone').value,
-  };
-  if (!data.username || !data.name) { alert('用户名和姓名为必填'); return; }
-  try {
-    await api('POST', '/api/users', data);
-    closeModal();
-    toast('添加成功');
-    loadUsers();
-  } catch(e) { toast('添加失败: ' + e.message, true); }
-}
-
-async function deleteUser(id) {
-  if (!confirm('确定删除该用户？此操作不可撤销！')) return;
-  try {
-    await api('DELETE', '/api/users/' + id);
-    toast('已删除');
-    loadUsers();
-  } catch(e) { toast('删除失败: ' + e.message, true); }
-}
-
-function closeModal() {
-  const m = document.getElementById('user-modal');
-  if (m) m.remove();
-}
-
-// ========== 分组管理 ==========
-async function groups(el) {
-  const render = () => {
-    el.innerHTML = `
-      <div class="page-title">📁 分组管理</div>
-      <div class="card">
-        <button class="btn btn-primary" onclick="showGroupForm()">+ 添加分组</button>
-      </div>
-      <div class="card" id="group-table-wrap"><p>加载中...</p></div>
-    `;
-    loadGroups();
-  };
-  el.render = render;
-  render();
-}
-
-async function loadGroups() {
-  try {
-    const list = await api('GET', '/api/groups');
-    document.getElementById('group-table-wrap').innerHTML = `
-      <table>
-        <tr><th>ID</th><th>名称</th><th>描述</th><th>成员数</th></tr>
-        ${list.map(g => `
-          <tr>
-            <td>${g.id}</td>
-            <td><strong>${g.name}</strong></td>
-            <td>${g.desc || '-'}</td>
-            <td>${g.member_count || 0}人</td>
-          </tr>
-        `).join('')}
-      </table>
-    `;
-  } catch(e) { toast('加载失败', true); }
-}
-
-function showGroupForm() {
-  const html = `
-    <div class="modal" id="group-modal">
-      <div class="modal-content">
-        <h3>添加分组</h3>
-        <div class="form-group"><label>名称</label><input id="g-name" /></div>
-        <div class="form-group"><label>描述</label><input id="g-desc" /></div>
-        <div style="text-align:right;margin-top:16px;">
-          <button class="btn btn-secondary" onclick="closeGroupModal()">取消</button>
-          <button class="btn btn-primary" onclick="doAddGroup()" style="margin-left:8px;">保存</button>
-        </div>
-      </div>
-    </div>
-  `;
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  document.body.appendChild(div.firstElementChild);
-}
-
-async function doAddGroup() {
-  const data = { name: document.getElementById('g-name').value, desc: document.getElementById('g-desc').value };
-  if (!data.name) { alert('请输入名称'); return; }
-  try {
-    await api('POST', '/api/groups', data);
-    closeGroupModal();
-    toast('添加成功');
-    loadGroups();
-  } catch(e) { toast('添加失败: ' + e.message, true); }
-}
-
-function closeGroupModal() {
-  const m = document.getElementById('group-modal');
-  if (m) m.remove();
-}
-
-// ========== 车辆管理 ==========
-async function vehicles(el) {
-  const render = () => {
-    el.innerHTML = `
-      <div class="page-title">🚙 车辆管理</div>
-      <div class="card">
-        <button class="btn btn-primary" onclick="showVehicleForm()">+ 添加车辆</button>
-      </div>
-      <div class="card" id="vehicle-table-wrap"><p>加载中...</p></div>
-    `;
-    loadVehicles();
-  };
-  el.render = render;
-  render();
-}
-
-async function loadVehicles() {
-  try {
-    const list = await api('GET', '/api/vehicles');
-    document.getElementById('vehicle-table-wrap').innerHTML = `
-      <table>
-        <tr><th>车牌号</th><th>品牌</th><th>型号</th><th>颜色</th><th>驾驶员</th><th>状态</th></tr>
-        ${list.map(v => `
-          <tr>
-            <td><strong>${v.plate_number}</strong></td>
-            <td>${v.brand || '-'}</td>
-            <td>${v.model || '-'}</td>
-            <td>${v.color || '-'}</td>
-            <td>${v.driver_name || '-'}</td>
-            <td>${v.is_active ? '<span style="color:#81C784;">正常</span>' : '<span style="color:#EF9A9A;">停用</span>'}</td>
-          </tr>
-        `).join('')}
-      </table>
-    `;
-  } catch(e) { toast('加载失败: ' + e.message, true); }
-}
-
-async function showVehicleForm() {
-  const groups = await api('GET', '/api/groups');
-  const users = await api('GET', '/api/users');
-  const drivers = users.filter(u => u.role === 'driver');
-  const html = `
-    <div class="modal" id="vehicle-modal">
-      <div class="modal-content">
-        <h3>添加车辆</h3>
-        <div class="row">
-          <div class="form-group"><label>车牌号 *</label><input id="v-plate" /></div>
-          <div class="form-group"><label>品牌</label><input id="v-brand" /></div>
-        </div>
-        <div class="row">
-          <div class="form-group"><label>型号</label><input id="v-model" /></div>
-          <div class="form-group"><label>颜色</label><input id="v-color" /></div>
-        </div>
-        <div class="row">
-          <div class="form-group"><label>VIN</label><input id="v-vin" /></div>
-          <div class="form-group"><label>分组</label><select id="v-group"><option value="">无</option>${groups.map(g => `<option value="${g.id}">${g.name}</option>`).join('')}</select></div>
-        </div>
-        <div class="form-group"><label>驾驶员</label><select id="v-driver"><option value="">无</option>${drivers.map(d => `<option value="${d.id}">${d.name}</option>`).join('')}</select></div>
-        <div style="text-align:right;margin-top:16px;">
-          <button class="btn btn-secondary" onclick="closeVehicleModal()">取消</button>
-          <button class="btn btn-primary" onclick="doAddVehicle()" style="margin-left:8px;">保存</button>
-        </div>
-      </div>
-    </div>
-  `;
-  const div = document.createElement('div');
-  div.innerHTML = html;
-  document.body.appendChild(div.firstElementChild);
-}
-
-async function doAddVehicle() {
-  const data = {
-    plate_number: document.getElementById('v-plate').value,
-    brand: document.getElementById('v-brand').value,
-    model: document.getElementById('v-model').value,
-    color: document.getElementById('v-color').value,
-    vin: document.getElementById('v-vin').value,
-    group_id: parseInt(document.getElementById('v-group').value) || null,
-    driver_id: parseInt(document.getElementById('v-driver').value) || null,
-  };
-  if (!data.plate_number) { alert('请输入车牌号'); return; }
-  try {
-    await api('POST', '/api/vehicles', data);
-    closeVehicleModal();
-    toast('添加成功');
-    loadVehicles();
-  } catch(e) { toast('添加失败: ' + e.message, true); }
-}
-
-function closeVehicleModal() {
-  const m = document.getElementById('vehicle-modal');
-  if (m) m.remove();
-}
-
-// ========== 系统设置 ==========
-async function settings(el) {
-  el.innerHTML = `
-    <div class="page-title">⚙️ 系统设置</div>
-    <div class="card"><p>加载中...</p></div>
-  `;
-  try {
-    const d = await api('GET', '/api/settings');
-    const s = d.settings || {};
-    el.innerHTML = `
-      <div class="page-title">⚙️ 系统设置</div>
-      <div class="card">
-        <p style="color:#888;font-size:13px;margin-bottom:12px;">配置文件: ${d.env_file_path}</p>
-        <div class="form-group"><label>数据存储目录</label><input id="s-data_dir" value="${s.DATA_DIR || ''}" /></div>
-        <div class="row">
-          <div class="form-group"><label>服务端口</label><input id="s-port" value="${s.PORT || '8700'}" /></div>
-          <div class="form-group"><label>里程预警阈值(km)</label><input id="s-threshold" value="${s.MILEAGE_THRESHOLD || '5000'}" /></div>
-        </div>
-        <div class="form-group"><label>OCR 里程识别</label>
-          <select id="s-ocr"><option value="true" ${s.OCR_ENABLED !== 'false' ? 'selected' : ''}>启用</option>
-          <option value="false" ${s.OCR_ENABLED === 'false' ? 'selected' : ''}>关闭</option></select>
-        </div>
-        <button class="btn btn-primary" onclick="saveSettings()" style="margin-top:12px;">💾 保存设置</button>
-      </div>
-    `;
+      <div class="card"><h3 style="margin-bottom:12px;">快速操作</h3>
+        ${hasPerm('user.view')?'<button class="btn btn-primary" onclick="switchPage(\'users\')">👥 用户管理</button>':''}
+        ${hasPerm('vehicle.view')?'<button class="btn btn-primary" style="margin-left:8px;" onclick="switchPage(\'vehicles\')">🚙 车辆管理</button>':''}
+        ${hasPerm('inspection.view')?'<button class="btn btn-primary" style="margin-left:8px;" onclick="switchPage(\'inspections\')">📋 日检管理</button>':''}
+        ${hasPerm('repair.view')?'<button class="btn btn-primary" style="margin-left:8px;" onclick="switchPage(\'repairs\')">🔧 维修管理</button>':''}
+      </div>`;
   } catch(e) { el.innerHTML = `<div class="card"><p>加载失败: ${e.message}</p></div>`; }
 }
 
-async function saveSettings() {
-  const fields = [
-    { key: 'DATA_DIR', id: 's-data_dir' },
-    { key: 'PORT', id: 's-port' },
-    { key: 'MILEAGE_THRESHOLD', id: 's-threshold' },
-    { key: 'OCR_ENABLED', id: 's-ocr' },
-  ];
+// ====== 用户管理 ======
+function page_users(el) {
+  var toolbarBtns = '';
+  if(hasPerm('user.create')) toolbarBtns += '<button class="btn btn-primary" onclick="showUserForm()">+ 添加用户</button>';
+  if(hasPerm('user.import')) toolbarBtns += '<button class="btn btn-secondary" onclick="showUserImport()">📥 批量导入</button>';
+  if(hasPerm('user.import')) toolbarBtns += '<button class="btn btn-secondary" onclick="downloadTemplate(\'users\')">📄 下载模板</button>';
+  el.innerHTML = `<div class="page-title">👥 用户管理</div>
+    <div class="toolbar">${toolbarBtns}</div>
+    <div class="card" id="user-table-wrap"><p>加载中...</p></div>`;
+  loadUsers();
+}
+async function loadUsers() {
   try {
-    for (const f of fields) {
-      const val = document.getElementById(f.id).value;
-      await api('PUT', '/api/settings', { key: f.key, value: val });
-    }
-    toast('设置已保存，重启服务后生效');
-  } catch(e) { toast('保存失败: ' + e.message, true); }
+    const list = await api('GET','/api/users');
+    const groups = await api('GET','/api/groups');
+    if (!list) return;
+    const gmap = {}; (groups||[]).forEach(g => gmap[g.id] = g.name);
+    document.getElementById('user-table-wrap').innerHTML = `<table><tr><th>用户名</th><th>姓名</th><th>角色</th><th>分组</th><th>手机</th><th>状态</th><th>操作</th></tr>
+      ${list.map(u => `<tr><td>${u.username}</td><td>${u.name}</td><td><span class="tag tag-${u.role}">${roleName(u.role)}</span></td><td>${gmap[u.group_id]||'-'}</td><td>${u.phone||'-'}</td><td>${u.is_active?'<span style="color:#81C784;">正常</span>':'<span style="color:#EF9A9A;">禁用</span>'}</td>
+        <td>${hasPerm('user.edit')?'<button class="btn btn-sm btn-secondary" onclick="showEditUser('+u.id+',\''+u.username+'\',\''+u.name+'\',\''+u.role+'\',\''+(u.phone||'')+'\','+(u.group_id||null)+','+(u.role_id||null)+')">编辑</button>':''}
+        ${hasPerm('user.delete')?'<button class="btn btn-sm btn-danger" onclick="deleteUser('+u.id+')">删除</button>':''}</td></tr>`).join('')}</table>`;
+  } catch(e) { toast('加载失败: ' + e.message, true); }
+}
+async function showUserForm(data) {
+  const groups = await api('GET','/api/groups') || [];
+  const roles = await api('GET','/api/roles/simple') || [];
+  const html = `<div class="modal-overlay"><div class="modal-content"><h3>${data?'编辑用户':'添加用户'}</h3>
+    <div class="form-group"><label>用户名</label><input id="f-username" value="${data?.username||''}" ${data?'disabled':''} /></div>
+    <div class="form-group"><label>姓名</label><input id="f-name" value="${data?.name||''}" /></div>
+    <div class="form-group"><label>密码${data?'（留空不修改）':''}</label><input id="f-pass" value="${data?'':'123456'}" /></div>
+    <div class="row"><div class="form-group"><label>角色（旧）</label><select id="f-role">${['driver','fleet_manager','repair_shop','admin'].map(r => `<option value="${r}" ${data?.role===r?'selected':''}>${roleName(r)}</option>`).join('')}</select></div>
+    <div class="form-group"><label>新角色</label><select id="f-role-id"><option value="">-- 选择角色 --</option>${roles.map(r => `<option value="${r.id}" ${data?.role_id===r.id?'selected':''}>${r.display_name||r.name}</option>`).join('')}</select></div>
+    <div class="form-group"><label>分组</label><select id="f-group"><option value="">无</option>${groups.map(g => `<option value="${g.id}" ${data?.group_id===g.id?'selected':''}>${g.name}</option>`).join('')}</select></div></div>
+    <div class="form-group"><label>手机</label><input id="f-phone" value="${data?.phone||''}" /></div>
+    <div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button>
+    <button class="btn btn-primary" onclick="${data?'doEditUser('+data.id+')':'doAddUser()'}" style="margin-left:8px;">保存</button></div></div></div>`;
+  const div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div.firstElementChild);
+}
+function showEditUser(id,username,name,role,phone,group_id,role_id) { showUserForm({id,username,name,role,phone,group_id,role_id}); }
+async function doAddUser() {
+  const rid=document.getElementById('f-role-id').value;
+  const data = { username:document.getElementById('f-username').value, name:document.getElementById('f-name').value, password:document.getElementById('f-pass').value||'123456', role:document.getElementById('f-role').value, role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
+  if (!data.username||!data.name) { toast('用户名和姓名为必填',true); return; }
+  try { await api('POST','/api/users',data); closeOverlay(); toast('添加成功'); loadUsers(); } catch(e) { toast('添加失败: '+e.message,true); }
+}
+async function doEditUser(id) {
+  const rid=document.getElementById('f-role-id').value;
+  const data = { name:document.getElementById('f-name').value, password:document.getElementById('f-pass').value, role:document.getElementById('f-role').value, role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
+  try { await api('PUT','/api/users/'+id,data); closeOverlay(); toast('已更新'); loadUsers(); } catch(e) { toast('更新失败: '+e.message,true); }
+}
+async function deleteUser(id) { if(!confirm('确定删除？')) return; try { await api('DELETE','/api/users/'+id); toast('已删除'); loadUsers(); } catch(e) { toast('删除失败: '+e.message,true); } }
+async function showUserImport() {
+  const html = `<div class="modal-overlay"><div class="modal-content" style="max-width:480px;"><h3>📥 批量导入用户</h3>
+    <div style="margin-bottom:12px;">
+      <p style="color:#888;font-size:13px;margin-bottom:8px;"><strong>方式一：Excel 导入</strong>（推荐，含示例数据）</p>
+      <div class="form-group"><label>选择文件</label><input id="import-user-file" type="file" accept=".xlsx" /></div>
+      <div style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="downloadTemplate('users')">📄 下载模板</button>
+        <button class="btn btn-primary" onclick="doImportUsersXlsx()" style="margin-left:8px;">📤 上传导入</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid #2A2A3E;padding-top:12px;">
+      <p style="color:#888;font-size:13px;margin-bottom:8px;"><strong>方式二：文本粘贴</strong></p>
+      <p style="color:#888;font-size:13px;margin-bottom:8px;">格式：用户名,姓名,密码,角色,分组名,手机号</p>
+      <div class="form-group"><textarea id="import-user-text" rows="5" placeholder="zhangsan,张三,123456,driver,第一车队,13800138001&#10;lisi,李四,123456,repair_shop,,13800138002"></textarea></div>
+      <div style="text-align:right;"><button class="btn btn-primary" onclick="doImportUsers()">导入</button></div>
+    </div>
+    <div style="text-align:right;margin-top:12px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button></div></div></div>`;
+  const div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div.firstElementChild);
+}
+async function doImportUsers() {
+  const text = document.getElementById('import-user-text').value.trim();
+  if (!text) { toast('请输入用户数据',true); return; }
+  const items = text.split('\n').filter(l=>l.trim()).map(line => { const p = line.split(/[,\t]/).map(s=>s.trim()); return { username:p[0]||'', name:p[1]||p[0]||'', password:p[2]||'123456', role:p[3]||'driver', group_name:p[4]||'', phone:p[5]||'' }; });
+  try { const r = await api('POST','/api/users/import',items); closeOverlay(); toast(`导入完成：成功 ${r.imported} 条，跳过 ${r.skipped} 条`); loadUsers(); } catch(e) { toast('导入失败: '+e.message,true); }
+}
+async function doImportUsersXlsx() {
+  const el = document.getElementById('import-user-file');
+  if(!el||!el.files||!el.files[0]){toast('请选择文件',true);return}
+  const fd=new FormData();fd.append('file',el.files[0]);
+  try {
+    const r=await fetch(BASE+'/api/users/import/xlsx',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd}).then(r=>{if(!r.ok)return r.json().then(d=>{throw new Error(d.detail||'导入失败')});return r.json()});
+    closeOverlay();toast('导入完成：成功 '+r.imported+' 条，跳过 '+r.skipped+' 条');loadUsers();
+  }catch(e){toast('导入失败: '+e.message,true)}
 }
 
-// ========== Toast ==========
-function toast(msg, isError) {
-  const el = document.createElement('div');
-  el.className = 'toast' + (isError ? ' error' : '');
-  el.textContent = msg;
-  document.body.appendChild(el);
-  setTimeout(() => el.remove(), 3000);
+// ====== 分组管理 ======
+function page_groups(el) {
+  var btns = '';
+  if(hasPerm('group.create')) btns += '<button class="btn btn-primary" onclick="showGroupForm()">+ 添加分组</button>';
+  el.innerHTML = `<div class="page-title">📁 分组管理</div><div class="toolbar">${btns}</div><div class="card" id="group-table-wrap"><p>加载中...</p></div>`;
+  loadGroups();
 }
-</script>
-</body>
-</html>
+function buildTree(groups, parentId, depth){
+  var h='';
+  for(var i=0;i<groups.length;i++){
+    var g=groups[i];
+    if(g.parent_id!==parentId) continue;
+    var indent='';
+    for(var d=0;d<depth;d++) indent+='　　';
+    var ops = '';
+    if(hasPerm('group.create')) ops += '<button class="btn btn-sm btn-secondary" onclick="showGroupForm('+g.id+',\''+esc(g.name)+'\',\''+esc(g.desc||'')+'\','+(g.parent_id||'')+')">编辑</button>';
+    if(hasPerm('group.delete')) ops += '<button class="btn btn-sm btn-danger" onclick="deleteGroup('+g.id+')">删除</button>';
+    h+='<tr><td>'+g.id+'</td><td style="padding-left:'+(8+depth*24)+'px;">'+(depth>0?'└ ':'')+'<strong>'+esc(g.name)+'</strong></td><td>'+esc(g.desc||'-')+'</td><td>'+g.member_count+'人</td><td>'+ops+'</td></tr>';
+    h+=buildTree(groups, g.id, depth+1);
+  }
+  return h;
+}
+async function loadGroups() {
+  try { const list = await api('GET','/api/groups'); if(!list) return;
+    document.getElementById('group-table-wrap').innerHTML = `<table><tr><th>ID</th><th>名称</th><th>描述</th><th>成员数</th><th>操作</th></tr>${buildTree(list, null, 0)}</table>`;
+  } catch(e) { toast('加载分组失败: '+e.message,true); }
+}
+function showGroupForm(id,name,desc,parentId){
+  // 加载所有分组用于上级下拉
+  api('GET','/api/groups').then(function(list){
+    var opts='<option value="">— 顶级分组 —</option>';
+    for(var i=0;i<list.length;i++){
+      var g=list[i];
+      if(g.id==id) continue; // 不能选自己
+      opts+='<option value="'+g.id+'" '+(g.id==parentId?'selected':'')+'>'+esc(g.name)+'</option>';
+    }
+    var html=`<div class="modal-overlay"><div class="modal-content"><h3>${id?'编辑分组':'添加分组'}</h3>
+      <div class="form-group"><label>名称</label><input id="g-name" value="${esc(name||'')}" /></div>
+      <div class="form-group"><label>描述</label><input id="g-desc" value="${esc(desc||'')}" /></div>
+      <div class="form-group"><label>上级分组</label><select id="g-parent">${opts}</select><span style="color:#888;font-size:12px;margin-left:6px;">留空为顶级分组</span></div>
+      <div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="doSaveGroup(${id||0})" style="margin-left:8px;">保存</button></div></div></div>`;
+    var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+  }).catch(function(e){toast('加载失败: '+e.message,true)});
+}
+async function doSaveGroup(id){
+  var name=document.getElementById('g-name').value.trim();
+  if(!name){toast('请输入分组名称',true);return}
+  var desc=document.getElementById('g-desc').value.trim();
+  var parentEl=document.getElementById('g-parent');
+  var parentId=parentEl?parentEl.value:null;
+  var body={name:name,desc:desc};
+  if(parentId) body.parent_id=parseInt(parentId);
+  try{
+    if(id) await api('PUT','/api/groups/'+id,body);
+    else await api('POST','/api/groups',body);
+    closeOverlay(); loadGroups(); toast(id?'已更新':'已创建');
+  }catch(e){toast('保存失败: '+e.message,true);}
+}
+async function deleteGroup(id) { if(!confirm('确认删除？')) return; try { await api('DELETE','/api/groups/'+id); toast('已删除'); loadGroups(); } catch(e) { toast('删除失败: '+e.message,true); } }
+
+// ====== 车辆管理 ======
+function page_vehicles(el) {
+  var btns = '';
+  if(hasPerm('vehicle.create')) btns += '<button class="btn btn-primary" onclick="showVehicleForm()">+ 添加车辆</button>';
+  if(hasPerm('vehicle.import')) btns += '<button class="btn btn-secondary" onclick="showVehicleImport()">📥 批量导入</button>';
+  if(hasPerm('vehicle.import')) btns += '<button class="btn btn-secondary" onclick="downloadTemplate(\'vehicles\')">📄 下载模板</button>';
+  if(hasPerm('vehicle.export')) btns += '<button class="btn btn-secondary" onclick="downloadCSV(\'/api/vehicles/export\',\'vehicles.csv\')">📤 导出CSV</button>';
+  el.innerHTML = `<div class="page-title">🚙 车辆管理</div>
+    <div class="toolbar">${btns}</div>
+    <div class="card" id="vehicle-table-wrap"><p>加载中...</p></div>`;
+  loadVehicles();
+}
+async function loadVehicles() {
+  try { const list = await api('GET','/api/vehicles'); if(!list) return;
+    document.getElementById('vehicle-table-wrap').innerHTML = `<table><tr><th>车牌号</th><th>车型</th><th>品牌</th><th>注册日期</th><th>分组</th><th>责任人</th><th>状态</th><th>操作</th></tr>
+      ${list.map(v => `<tr><td><strong>${v.plate_number}</strong></td><td>${v.model||'-'}</td><td>${v.brand||'-'}</td><td>${v.registration_date||'-'}</td><td>${v.group_name||'-'}</td><td>${v.driver_name||'-'}</td><td>${v.is_active?'<span style="color:#81C784;">正常</span>':'<span style="color:#EF9A9A;">停用</span>'}</td>
+        <td>${hasPerm('vehicle.edit')?'<button class="btn btn-sm btn-secondary" onclick="showEditVehicle('+v.id+',\''+v.plate_number+'\',\''+(v.brand||'')+'\',\''+(v.model||'')+'\',\''+(v.color||'')+'\',\''+(v.vin||'')+'\',\''+(v.registration_date||'')+'\','+(v.driver_id||null)+','+(v.group_id||null)+')">编辑</button>':''}
+        ${hasPerm('vehicle.delete')?'<button class="btn btn-sm btn-danger" onclick="deleteVehicle('+v.id+')">删除</button>':''}</td></tr>`).join('')}</table>`;
+  } catch(e) { toast('加载失败: '+e.message,true); }
+}
+async function showVehicleForm(data) {
+  const groups = await api('GET','/api/groups')||[];
+  const users = await api('GET','/api/users')||[];
+  const drivers = users.filter(u=>u.role==='driver');
+  const html = `<div class="modal-overlay"><div class="modal-content"><h3>${data?'编辑车辆':'添加车辆'}</h3>
+    <div class="row"><div class="form-group"><label>车牌号 *</label><input id="v-plate" value="${data?.plate_number||''}" /></div><div class="form-group"><label>品牌</label><input id="v-brand" value="${data?.brand||''}" /></div></div>
+    <div class="row"><div class="form-group"><label>车型</label><input id="v-model" value="${data?.model||''}" /></div><div class="form-group"><label>颜色</label><input id="v-color" value="${data?.color||''}" /></div></div>
+    <div class="row"><div class="form-group"><label>车架号</label><input id="v-vin" value="${data?.vin||''}" /></div><div class="form-group"><label>注册日期</label><input id="v-regdate" type="date" value="${data?.registration_date||''}" /></div></div>
+    <div class="row"><div class="form-group"><label>分组</label><select id="v-group"><option value="">无</option>${groups.map(g => `<option value="${g.id}" ${data?.group_id===g.id?'selected':''}>${g.name}</option>`).join('')}</select></div>
+    <div class="form-group"><label>责任人(驾驶员)</label><select id="v-driver"><option value="">无</option>${drivers.map(d => `<option value="${d.id}" ${data?.driver_id===d.id?'selected':''}>${d.name}</option>`).join('')}</select></div></div>
+    <div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="${data?'doEditVehicle('+data.id+')':'doAddVehicle()'}" style="margin-left:8px;">保存</button></div></div></div>`;
+  const div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div.firstElementChild);
+}
+function showEditVehicle(id,plate,brand,model,color,vin,reg_date,driver_id,group_id) { showVehicleForm({id,plate_number:plate,brand,model,color,vin,registration_date:reg_date,driver_id,group_id}); }
+async function doAddVehicle() {
+  const data = { plate_number:document.getElementById('v-plate').value, brand:document.getElementById('v-brand').value, model:document.getElementById('v-model').value, color:document.getElementById('v-color').value, vin:document.getElementById('v-vin').value, registration_date:document.getElementById('v-regdate').value||'', group_id:parseInt(document.getElementById('v-group').value)||null, driver_id:parseInt(document.getElementById('v-driver').value)||null };
+  if(!data.plate_number) { toast('请输入车牌号',true); return; }
+  try { await api('POST','/api/vehicles',data); closeOverlay(); toast('添加成功'); loadVehicles(); } catch(e) { toast('添加失败: '+e.message,true); }
+}
+async function doEditVehicle(id) {
+  const data = { plate_number:document.getElementById('v-plate').value, brand:document.getElementById('v-brand').value, model:document.getElementById('v-model').value, color:document.getElementById('v-color').value, vin:document.getElementById('v-vin').value, registration_date:document.getElementById('v-regdate').value||'', group_id:parseInt(document.getElementById('v-group').value)||null, driver_id:parseInt(document.getElementById('v-driver').value)||null };
+  if(!data.plate_number) { toast('请输入车牌号',true); return; }
+  try { await api('PUT','/api/vehicles/'+id,data); closeOverlay(); toast('已更新'); loadVehicles(); } catch(e) { toast('更新失败: '+e.message,true); }
+}
+async function deleteVehicle(id) { if(!confirm('确定删除？')) return; try { await api('DELETE','/api/vehicles/'+id); toast('已删除'); loadVehicles(); } catch(e) { toast('删除失败: '+e.message,true); } }
+async function showVehicleImport() {
+  const html = `<div class="modal-overlay"><div class="modal-content" style="max-width:480px;"><h3>📥 批量导入车辆</h3>
+    <div style="margin-bottom:12px;">
+      <p style="color:#888;font-size:13px;margin-bottom:8px;"><strong>方式一：Excel 导入</strong>（推荐，含示例数据）</p>
+      <p style="color:#888;font-size:13px;margin-bottom:8px;">模板字段：<strong>车牌号、车型、注册日期、责任人(选填)</strong></p>
+      <div class="form-group"><label>选择文件</label><input id="import-vehicle-file" type="file" accept=".xlsx" /></div>
+      <div style="margin-top:8px;">
+        <button class="btn btn-secondary" onclick="downloadTemplate('vehicles')">📄 下载模板</button>
+        <button class="btn btn-primary" onclick="doImportVehiclesXlsx()" style="margin-left:8px;">📤 上传导入</button>
+      </div>
+    </div>
+    <div style="border-top:1px solid #2A2A3E;padding-top:12px;">
+      <p style="color:#888;font-size:13px;margin-bottom:8px;"><strong>方式二：文本粘贴</strong></p>
+      <p style="color:#888;font-size:13px;margin-bottom:8px;">每行一辆：<strong>车牌号,车型,注册日期,责任人(选填)</strong><br>示例：京A12345,大众迈腾 2024款,2024-06-01,zhangsan</p>
+      <div class="form-group"><textarea id="import-vehicle-text" rows="5" placeholder="京A12345,大众迈腾 2024款,2024-06-01,zhangsan&#10;京B67890,丰田凯美瑞 2023款,2023-09-15,lisi"></textarea></div>
+      <div style="text-align:right;"><button class="btn btn-primary" onclick="doImportVehicles()">导入</button></div>
+    </div>
+    <div style="text-align:right;margin-top:12px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button></div></div></div>`;
+  const div = document.createElement('div'); div.innerHTML = html; document.body.appendChild(div.firstElementChild);
+}
+async function doImportVehicles() {
+  const text = document.getElementById('import-vehicle-text').value.trim();
+  if(!text) { toast('请输入车辆数据',true); return; }
+  const items = text.split('\n').filter(l=>l.trim()).map(line => { const p = line.split(/[,\t]/).map(s=>s.trim()); return { plate_number:p[0]||'', model:p[1]||'', registration_date:p[2]||'', driver_username:p[3]||'' }; });
+  try { const r = await api('POST','/api/vehicles/import',items); closeOverlay(); toast(`导入完成：成功 ${r.imported} 条，跳过 ${r.skipped} 条`); loadVehicles(); } catch(e) { toast('导入失败: '+e.message,true); }
+}
+async function doImportVehiclesXlsx() {
+  const el = document.getElementById('import-vehicle-file');
+  if(!el||!el.files||!el.files[0]){toast('请选择文件',true);return}
+  const fd=new FormData();fd.append('file',el.files[0]);
+  try {
+    const r=await fetch(BASE+'/api/vehicles/import/xlsx',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd}).then(r=>{if(!r.ok)return r.json().then(d=>{throw new Error(d.detail||'导入失败')});return r.json()});
+    closeOverlay();toast('导入完成：成功 '+r.imported+' 条，跳过 '+r.skipped+' 条');loadVehicles();
+  }catch(e){toast('导入失败: '+e.message,true)}
+}
+
+// ====== 日检管理 ======
+function page_inspections(el) {
+  window.inspPage = 1;
+  var btns = '<button class="btn btn-primary" onclick="loadInspections(1)">🔍 查询</button><button class="btn btn-secondary" onclick="downloadInspCSV()">📤 导出CSV</button>';
+  el.innerHTML = `<div class="page-title">📋 日检管理</div>
+    <div class="card"><div class="filter-bar">
+      <div class="form-group"><label>车牌号</label><input id="insp-v" placeholder="全部" /></div>
+      <div class="form-group"><label>开始日期</label><input id="insp-sd" type="date" /></div>
+      <div class="form-group"><label>结束日期</label><input id="insp-ed" type="date" /></div>
+      ${btns}
+    </div></div>
+    <div class="card" id="insp-table-wrap"><p>加载中...</p></div>`;
+  loadInspections(1);
+}
+async function loadInspections(page) {
+  try {
+    if (page) window.inspPage = page;
+    const v = document.getElementById('insp-v')?.value || '';
+    const sd = document.getElementById('insp-sd')?.value || '';
+    const ed = document.getElementById('insp-ed')?.value || '';
+    const q = { page: window.inspPage||1, size: 20 };
+    if (v) q.vehicle_id = v; if (sd) q.start_date = sd; if (ed) q.end_date = ed;
+    const r = await api('GET', '/api/inspections?' + new URLSearchParams(q).toString());
+    if (!r) return;
+    const { items, total, page: cp, size: sz } = r;
+    const totalPages = Math.ceil(total / sz);
+    document.getElementById('insp-table-wrap').innerHTML = `
+      <table><tr><th>日期</th><th>车牌号</th><th>驾驶员</th><th>里程数</th><th>上次里程</th><th>里程差</th><th>超阈值</th><th>问题</th></tr>
+      ${items.map(i => `<tr><td>${i.inspection_date}</td><td><strong>${i.plate_number}</strong></td><td>${i.driver_name}</td><td>${i.odometer_reading||'-'}</td><td>${i.last_odometer||'-'}</td><td>${i.mileage_diff||'-'}</td><td>${i.threshold_exceeded?'<span style="color:#EF9A9A;">⚠️ 是</span>':'<span style="color:#81C784;">否</span>'}</td><td>${i.issues||'-'}</td></tr>`).join('')}
+      ${items.length === 0 ? '<tr><td colspan="8" style="text-align:center;color:#555;">暂无数据</td></tr>' : ''}
+      </table>
+      <div class="pagination"><button class="btn btn-sm btn-secondary" onclick="loadInspections(1)" ${cp<=1?'disabled':''}>首页</button>
+      <button class="btn btn-sm btn-secondary" onclick="loadInspections(${cp+1})" ${cp>=totalPages?'disabled':''}>下一页</button>
+      <button class="btn btn-sm btn-secondary" onclick="loadInspections(${totalPages})" ${cp>=totalPages?'disabled':''}>末页</button></div>`;
+  } catch(e) { toast('加载失败: '+e.message,true); }
+}
+function downloadInspCSV() {
+  const v = document.getElementById('insp-v')?.value || '';
+  const sd = document.getElementById('insp-sd')?.value || '';
+  const ed = document.getElementById('insp-ed')?.value || '';
+  const q = new URLSearchParams();
+  if (v) q.set('vehicle_id', v); if (sd) q.set('start_date', sd); if (ed) q.set('end_date', ed);
+  downloadCSV('/api/inspections/export?'+q.toString(),'inspections.csv');
+}
+
+// ====== 车辆日检（独立模块） ======
+async function page_new_inspection(el) {
+  // 加载车辆列表
+  var vehicles = [];
+  try {
+    var r = await api('GET','/api/vehicles');
+    vehicles = r && r.items ? r.items : (r||[]);
+  } catch(e) { /* ignore */ }
+  var vopts = '<option value="">请选择车辆</option>';
+  for(var i=0;i<vehicles.length;i++) vopts += '<option value="'+vehicles[i].id+'">'+esc(vehicles[i].plate_number)+' ('+esc(vehicles[i].brand||'')+' '+esc(vehicles[i].model||'')+')</option>';
+
+  el.innerHTML = '<div class="page-title">📋 车辆日检</div>'+
+    '<div class="card" style="max-width:700px;margin:0 auto;">'+
+    '<div class="form-group"><label>车辆 <span style="color:#E82337;">*</span></label><select id="insp-form-vid">'+vopts+'</select></div>'+
+    '<div class="form-group"><label>里程表照片</label>'+
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'+
+        '<input type="file" id="insp-form-odo-file" accept="image/*" capture="environment" style="width:auto;" onchange="ocrInspPhoto()" />'+
+      '</div>'+
+      '<div id="insp-form-odo-preview" style="margin-top:4px;font-size:13px;color:#888;"></div>'+
+    '</div>'+
+    '<div class="row"><div class="form-group"><label>里程数（公里）<span style="color:#E82337;">*</span></label><input id="insp-form-odo" type="number" min="0" placeholder="OCR 结果或手动输入" style="width:100%;" /></div></div>'+
+    '<div class="form-group"><label>外观照片</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>驾驶室照片</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>问题描述</label><textarea id="insp-form-issues" rows="3" placeholder="可选，如轮胎气压不足、灯光异常等"></textarea></div>'+
+    '<div style="text-align:right;margin-top:16px;">'+
+      '<button class="btn btn-secondary" onclick="switchPage(\'inspections\')">取消</button>'+
+      '<button class="btn btn-primary" onclick="submitInspFormPage()" style="margin-left:8px;">✅ 提交日检</button>'+
+    '</div></div>';
+}
+
+async function submitInspFormPage() {
+  var vid = parseInt(document.getElementById('insp-form-vid').value);
+  if(!vid) return toast('请选择车辆', true);
+  var odo = parseInt(document.getElementById('insp-form-odo').value);
+  if(!odo || odo <= 0) return toast('请输入里程数', true);
+  var issues = document.getElementById('insp-form-issues').value.trim() || '';
+
+  // 上传照片
+  var extPhotos = '[]', cabPhotos = '[]', odoPhoto = '';
+  try {
+    if(document.getElementById('insp-form-ext-file').files.length > 0)
+      extPhotos = await uploadFiles('insp-form-ext-file');
+    if(document.getElementById('insp-form-cab-file').files.length > 0)
+      cabPhotos = await uploadFiles('insp-form-cab-file');
+    if(document.getElementById('insp-form-odo-file').files.length > 0) {
+      var fd = new FormData(); fd.append('file', document.getElementById('insp-form-odo-file').files[0]);
+      var r = await fetch(BASE + '/api/inspections/upload', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:fd });
+      var d = await r.json();
+      odoPhoto = d.url || '';
+    }
+  } catch(e) { /* 照片上传失败不影响提交 */ }
+
+  try {
+    var body = new FormData();
+    body.append('vehicle_id', vid);
+    body.append('manual_odometer', odo);
+    body.append('issues', issues);
+    body.append('exterior_photos', extPhotos);
+    body.append('cabin_photos', cabPhotos);
+    body.append('odometer_photo', odoPhoto);
+    var r = await fetch(BASE + '/api/inspections', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:body });
+    if(!r.ok) { var e = await r.json(); throw new Error(e.detail || '提交失败'); }
+    var result = await r.json();
+    toast('✅ 日检提交成功，里程: '+result.odometer_reading+' km' + (result.threshold_exceeded?' ⚠️ 超阈值':''));
+    // 成功后跳转到日检列表
+    switchPage('inspections');
+    loadInspections(1);
+  } catch(e) { toast('提交失败: '+e.message, true); }
+}
+
+// ====== 日检新建表单（弹窗） ======
+async function showInspForm() {
+  // 加载车辆列表
+  var vehicles = [];
+  try {
+    var r = await api('GET','/api/vehicles');
+    vehicles = r && r.items ? r.items : (r||[]);
+  } catch(e) { /* ignore */ }
+  var vopts = '<option value="">请选择车辆</option>';
+  for(var i=0;i<vehicles.length;i++) vopts += '<option value="'+vehicles[i].id+'">'+esc(vehicles[i].plate_number)+' ('+esc(vehicles[i].brand||'')+' '+esc(vehicles[i].model||'')+')</option>';
+
+  var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:600px;"><h3>📋 新建日检</h3>'+
+    '<div class="form-group"><label>车辆 <span style="color:#E82337;">*</span></label><select id="insp-form-vid">'+vopts+'</select></div>'+
+    '<div class="form-group"><label>里程表照片</label>'+
+      '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'+
+        '<input type="file" id="insp-form-odo-file" accept="image/*" capture="environment" style="width:auto;" onchange="ocrInspPhoto()" />'+
+      '</div>'+
+      '<div id="insp-form-odo-preview" style="margin-top:4px;font-size:13px;color:#888;"></div>'+
+    '</div>'+
+    '<div class="row"><div class="form-group"><label>里程数（公里）<span style="color:#E82337;">*</span></label><input id="insp-form-odo" type="number" min="0" placeholder="OCR 结果或手动输入" style="width:100%;" /></div></div>'+
+    '<div class="form-group"><label>外观照片</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>驾驶室照片</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>问题描述</label><textarea id="insp-form-issues" rows="3" placeholder="可选，如轮胎气压不足、灯光异常等"></textarea></div>'+
+    '<div style="text-align:right;margin-top:16px;">'+
+      '<button class="btn btn-secondary" onclick="closeOverlay()">取消</button>'+
+      '<button class="btn btn-primary" onclick="submitInspForm()" style="margin-left:8px;">✅ 提交日检</button>'+
+    '</div></div></div>';
+  var d = document.createElement('div'); d.innerHTML = html; document.body.appendChild(d.firstElementChild);
+}
+async function ocrInspPhoto() {
+  var input = document.getElementById('insp-form-odo-file');
+  if(!input || !input.files || !input.files[0]) return toast('请先选择里程表照片',true);
+  var file = input.files[0];
+  var fd = new FormData(); fd.append('file', file);
+  document.getElementById('insp-form-odo-preview').innerHTML = '⏳ 识别中...';
+  try {
+    var r = await fetch(BASE + '/api/ocr/recognize', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:fd });
+    var d = await r.json();
+    if(d.recognized && d.mileage) {
+      document.getElementById('insp-form-odo').value = d.mileage;
+      document.getElementById('insp-form-odo-preview').innerHTML = '<span style="color:#81C784;">✅ 识别到 <b>'+d.mileage+'</b> 公里，可手动修正</span>';
+    } else {
+      document.getElementById('insp-form-odo-preview').innerHTML = '<span style="color:#EF9A9A;">❌ 未识别出里程数，请手动输入</span>';
+    }
+  } catch(e) {
+    document.getElementById('insp-form-odo-preview').innerHTML = '<span style="color:#EF9A9A;">请求失败: '+e.message+'</span>';
+  }
+}
+async function submitInspForm() {
+  var vid = parseInt(document.getElementById('insp-form-vid').value);
+  if(!vid) return toast('请选择车辆', true);
+  var odo = parseInt(document.getElementById('insp-form-odo').value);
+  if(!odo || odo <= 0) return toast('请输入里程数', true);
+  var issues = document.getElementById('insp-form-issues').value.trim() || '';
+
+  // 上传照片
+  document.querySelector('.modal-content h3').textContent = '⏳ 上传照片中...';
+  var extPhotos = '[]', cabPhotos = '[]', odoPhoto = '';
+  try {
+    if(document.getElementById('insp-form-ext-file').files.length > 0)
+      extPhotos = await uploadFiles('insp-form-ext-file');
+    if(document.getElementById('insp-form-cab-file').files.length > 0)
+      cabPhotos = await uploadFiles('insp-form-cab-file');
+    if(document.getElementById('insp-form-odo-file').files.length > 0) {
+      var fd = new FormData(); fd.append('file', document.getElementById('insp-form-odo-file').files[0]);
+      var r = await fetch(BASE + '/api/inspections/upload', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:fd });
+      var d = await r.json();
+      odoPhoto = d.url || '';
+    }
+  } catch(e) { /* 照片上传失败不影响提交 */ }
+
+  document.querySelector('.modal-content h3').textContent = '⏳ 提交中...';
+  try {
+    var body = new FormData();
+    body.append('vehicle_id', vid);
+    body.append('manual_odometer', odo);
+    body.append('issues', issues);
+    body.append('exterior_photos', extPhotos);
+    body.append('cabin_photos', cabPhotos);
+    body.append('odometer_photo', odoPhoto);
+    var r = await fetch(BASE + '/api/inspections', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:body });
+    if(!r.ok) { var e = await r.json(); throw new Error(e.detail || '提交失败'); }
+    var result = await r.json();
+    toast('✅ 日检提交成功，里程: '+result.odometer_reading+' km' + (result.threshold_exceeded?' ⚠️ 超阈值':''));
+    closeOverlay();
+    loadInspections(1);
+  } catch(e) { toast('提交失败: '+e.message, true); document.querySelector('.modal-content h3').textContent = '📋 新建日检'; }
+}
+
+// ====== 维修管理（车管员/管理员） ======
+function page_repairs(el) {
+  window.repPage = 1;
+  var btns = '';
+  if(hasPerm('repair.dispatch')) btns += '<button class="btn btn-primary" onclick="showDispatchForm()">🚚 派单</button>';
+  if(hasPerm('repair.export')) btns += '<button class="btn btn-secondary" onclick="downloadCSV(\'/api/repairs/export\',\'repairs.csv\')">📤 导出CSV</button>';
+  el.innerHTML = `<div class="page-title">🔧 维修管理</div>
+    <div class="card"><div class="filter-bar">
+      <div class="form-group"><label>状态</label><select id="rep-status" onchange="loadRepairs(1)">
+        <option value="">全部</option>
+        <option value="dispatched">已派单</option>
+        <option value="accepted">已接单</option>
+        <option value="submitted">已提交明细</option>
+        <option value="in_progress">维修中</option>
+        <option value="completed">已完成</option>
+        <option value="verified">已验收</option>
+      </select></div>
+      ${btns}
+    </div></div>
+    <div class="card" id="rep-table-wrap"><p class="loading">加载中...</p></div>`;
+  loadRepairs(1);
+}
+async function loadRepairs(page) {
+  try {
+    if(page) window.repPage = page;
+    var st = document.getElementById('rep-status')?.value || '';
+    var q = { page: window.repPage||1, size: 20 };
+    if(st) q.status = st;
+    var r = await api('GET','/api/repairs?' + new URLSearchParams(q).toString());
+    if(!r) return;
+    var {items, total, page:cp, size:sz} = r;
+    var totalPages = Math.ceil(total / sz);
+    var h = '<table><tr><th>ID</th><th>车牌号</th><th>修理厂</th><th>描述</th><th>状态</th><th>创建时间</th><th>操作</th></tr>';
+    for(var i=0;i<items.length;i++) {
+      var o = items[i];
+      var actions = '';
+      var st2 = o.status;
+      if(st2 === 'dispatched' && hasPerm('repair.accept')) actions += '<button class="btn btn-sm btn-primary" onclick="acceptFromRepairs('+o.id+')">接单</button>';
+      if(st2 === 'completed' && hasPerm('repair.verify')) actions += '<button class="btn btn-sm btn-success" onclick="showVerifyForm('+o.id+')">验收</button>';
+      if(hasPerm('repair.view')) actions += '<button class="btn btn-sm btn-secondary" onclick="showRepairDetail('+o.id+')">详情</button>';
+      h += '<tr><td>'+o.id+'</td><td><strong>'+esc(o.plate_number)+'</strong></td><td>'+esc(o.shop_name||'-')+'</td><td>'+esc(o.description||'').substring(0,30)+'</td><td>'+statusText2(o.status)+'</td><td style="font-size:13px;">'+(o.created_at||'').substring(0,19)+'</td><td>'+actions+'</td></tr>';
+    }
+    h += '</table>';
+    if(!items.length) h = '<p style="text-align:center;padding:20px;color:#555;">暂无维修单</p>';
+    h += '<div class="pagination"><button class="btn btn-sm btn-secondary" onclick="loadRepairs(1)" '+(cp<=1?'disabled':'')+'>首页</button><button class="btn btn-sm btn-secondary" onclick="loadRepairs('+(cp+1)+')" '+(cp>=totalPages?'disabled':'')+'>下一页</button><button class="btn btn-sm btn-secondary" onclick="loadRepairs('+totalPages+')" '+(cp>=totalPages?'disabled':'')+'>末页</button></div>';
+    document.getElementById('rep-table-wrap').innerHTML = h;
+  } catch(e) { document.getElementById('rep-table-wrap').innerHTML = '<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'; }
+}
+function acceptFromRepairs(oid){
+  api('PUT','/api/repairs/'+oid+'/accept',{accept_photos:'[]'}).then(function(){loadRepairs();toast('已接单')}).catch(function(e){toast('接单失败: '+e.message,true)});
+}
+function showVerifyForm(oid){
+  var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:400px;"><h3>🔍 维修验收</h3><div class="form-group"><label>验收备注</label><textarea id="vf-notes" rows="3" placeholder="验收结果说明"></textarea></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-success" onclick="doVerify('+oid+')" style="margin-left:8px;">✅ 通过验收</button></div></div></div>';
+  var d = document.createElement('div'); d.innerHTML = html; document.body.appendChild(d.firstElementChild);
+}
+function doVerify(oid){
+  var notes = document.getElementById('vf-notes').value.trim() || '';
+  api('PUT','/api/repairs/'+oid+'/verify',{verify_notes:notes,verify_photos:'[]'}).then(function(){closeOverlay();loadRepairs();toast('✅ 已验收')}).catch(function(e){toast('验收失败: '+e.message,true)});
+}
+// 派单弹窗
+async function showDispatchForm() {
+  var vehicles = [];
+  try { var r = await api('GET','/api/vehicles'); vehicles = r && r.items ? r.items : (r||[]); } catch(e){}
+  var vopts = '<option value="">选择车辆</option>';
+  for(var i=0;i<vehicles.length;i++) vopts += '<option value="'+vehicles[i].id+'">'+esc(vehicles[i].plate_number)+'</option>';
+  var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:500px;"><h3>🚚 派单</h3>'+
+    '<div class="form-group"><label>车辆 <span style="color:#E82337;">*</span></label><select id="dp-vid">'+vopts+'</select></div>'+
+    '<div class="form-group"><label>修理厂名称</label><input id="dp-shop" placeholder="修理厂名称" /></div>'+
+    '<div class="form-group"><label>问题描述</label><textarea id="dp-desc" rows="3" placeholder="车辆故障描述"></textarea></div>'+
+    '<div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="doDispatch()" style="margin-left:8px;">📤 派单</button></div></div></div>';
+  var d = document.createElement('div'); d.innerHTML = html; document.body.appendChild(d.firstElementChild);
+}
+function doDispatch(){
+  var vid = parseInt(document.getElementById('dp-vid').value);
+  if(!vid) return toast('请选择车辆', true);
+  var shop = document.getElementById('dp-shop').value.trim() || '';
+  var desc = document.getElementById('dp-desc').value.trim() || '';
+  api('POST','/api/repairs/dispatch', {vehicle_id:vid, shop_name:shop, description:desc}).then(function(){
+    closeOverlay(); loadRepairs(); toast('✅ 已派单');
+  }).catch(function(e){toast('派单失败: '+e.message,true)});
+}
+
+// ====== 维修流程自定义（管理员） ======
+function page_repair_flows(el){
+  var btns = '';
+  if(hasPerm('repair_flow.create')) btns += '<button class="btn btn-primary" onclick="showFlowForm()">+ 新建流程</button>';
+  el.innerHTML='<div class="page-title">🔄 维修流程自定义</div><div class="card"><div class="toolbar">'+btns+'</div></div><div class="card" id="rfw"><p class="loading">加载中...</p></div>';
+  loadRepairFlows();
+}
+function loadRepairFlows(){
+  api('GET','/api/repair-flows').then(function(flows){
+    var h='<table><tr><th>ID</th><th>流程名称</th><th>步骤数</th><th>创建时间</th><th>操作</th></tr>';
+    for(var i=0;i<flows.length;i++){
+      var f=flows[i];
+      (function(fid){
+        api('GET','/api/repair-flows/'+fid+'/steps').then(function(steps){
+          var sc=document.getElementById('step-count-'+fid);
+          if(sc) sc.textContent=steps.length+'步';
+        }).catch(function(){});
+      })(f.id);
+      var ops = '';
+      if(hasPerm('repair_flow.edit')) ops += '<button class="btn btn-sm btn-secondary" onclick="showFlowSteps('+f.id+')">配置步骤</button><button class="btn btn-sm btn-secondary" onclick="showFlowForm('+f.id+',\''+esc(f.name)+'\')">编辑</button>';
+      if(hasPerm('repair_flow.delete')) ops += '<button class="btn btn-sm btn-danger" onclick="delFlow('+f.id+')">删除</button>';
+      h+='<tr><td>'+f.id+'</td><td>'+esc(f.name)+'</td><td><span id="step-count-'+f.id+'">...</span></td><td>'+ (f.created_at||'') +'</td><td>'+ops+'</td></tr>';
+    }
+    h+='</table>';
+    if(!flows.length) h='<p style="text-align:center;padding:20px;color:#555;">暂无流程，点击「新建流程」创建</p>';
+    document.getElementById('rfw').innerHTML=h;
+  }).catch(function(e){document.getElementById('rfw').innerHTML='<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'});
+}
+function showFlowForm(id,name){
+  var html='<div class="modal-overlay"><div class="modal-content" style="max-width:400px;"><h3>'+(id?'编辑流程':'新建流程')+'</h3><div class="form-group"><label>流程名称</label><input id="ff-name" value="'+esc(name||'')+'" placeholder="例：标准维修流程" /></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveFlow('+(id||0)+')" style="margin-left:8px;">保存</button></div></div></div>';
+  var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+}
+function saveFlow(id){
+  var name=document.getElementById('ff-name').value.trim()||'未命名流程';
+  var p=id?api('PUT','/api/repair-flows/'+id,{name:name}):api('POST','/api/repair-flows',{name:name});
+  p.then(function(){closeOverlay();loadRepairFlows();toast(id?'已更新':'已创建')}).catch(function(e){toast('保存失败: '+e.message,true)});
+}
+function delFlow(id){
+  if(!confirm('确认删除此流程？（关联的维修单不受影响）'))return;
+  api('DELETE','/api/repair-flows/'+id).then(function(){loadRepairFlows();toast('已删除')}).catch(function(e){toast('删除失败: '+e.message,true)});
+}
+function showFlowSteps(fid){
+  api('GET','/api/repair-flows/'+fid+'/steps').then(function(steps){
+    var roles={admin:'管理员',fleet_manager:'车管员',repair_shop:'汽修厂',driver:'司机'};
+    var html='<div class="modal-overlay"><div class="modal-content" style="max-width:700px;"><h3>配置步骤</h3><div style="margin-bottom:12px;"><button class="btn btn-primary" onclick="showStepForm('+fid+','+(steps.length+1)+')">+ 添加步骤</button></div><table><tr><th>序号</th><th>步骤名称</th><th>操作角色</th><th>按钮文字</th><th>操作</th></tr>';
+    for(var i=0;i<steps.length;i++){var s=steps[i];html+='<tr><td>'+s.step_order+'</td><td>'+esc(s.step_name)+'</td><td>'+(roles[s.action_role]||s.action_role)+'</td><td>'+esc(s.action_label)+'</td><td><button class="btn btn-sm btn-secondary" onclick="showStepForm('+fid+','+s.step_order+','+s.id+',\''+esc(s.step_name)+'\',\''+s.action_role+'\',\''+esc(s.action_label)+'\')">编辑</button><button class="btn btn-sm btn-danger" onclick="delStep('+s.id+','+fid+')">删除</button></td></tr>'}
+    html+='</table>';if(!steps.length)html+='<p style="text-align:center;color:#555;padding:12px;">暂无步骤</p>';
+    html+='<div style="text-align:right;margin-top:12px;"><button class="btn btn-secondary" onclick="closeOverlay()">关闭</button></div></div></div>';
+    var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+  }).catch(function(e){toast('加载失败: '+e.message,true)});
+}
+function showStepForm(fid,order,sid,sname,role,label){
+  var roles=[{v:'fleet_manager',t:'车管员'},{v:'repair_shop',t:'汽修厂'},{v:'admin',t:'管理员'},{v:'driver',t:'司机'}];
+  var ropts='';for(var i=0;i<roles.length;i++){ropts+='<option value="'+roles[i].v+'" '+(role===roles[i].v?'selected':'')+'>'+roles[i].t+'</option>'}
+  var html='<div class="modal-overlay"><div class="modal-content" style="max-width:400px;"><h3>'+(sid?'编辑步骤':'添加步骤')+'</h3><div class="form-group"><label>步骤名称</label><input id="fs-name" value="'+esc(sname||'')+'" placeholder="例：派单" /></div><div class="form-group"><label>操作角色</label><select id="fs-role">'+ropts+'</select></div><div class="form-group"><label>按钮文字</label><input id="fs-label" value="'+esc(label||'')+'" placeholder="例：接单" /></div><input id="fs-order" type="hidden" value="'+order+'" /><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveStep('+fid+','+(sid||0)+')" style="margin-left:8px;">保存</button></div></div></div>';
+  var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+}
+function saveStep(fid,sid){
+  var body={step_order:parseInt(document.getElementById('fs-order').value)||0,step_name:document.getElementById('fs-name').value.trim()||'未命名',action_role:document.getElementById('fs-role').value,action_label:document.getElementById('fs-label').value.trim()||'执行'};
+  var p=sid?api('PUT','/api/repair-flows/steps/'+sid,body):api('POST','/api/repair-flows/'+fid+'/steps',body);
+  p.then(function(){closeOverlay();showFlowSteps(fid);toast(sid?'已更新':'已添加')}).catch(function(e){toast('保存失败: '+e.message,true)});
+}
+function delStep(sid,fid){
+  if(!confirm('确认删除此步骤？'))return;
+  api('DELETE','/api/repair-flows/steps/'+sid).then(function(){closeOverlay();showFlowSteps(fid);toast('已删除')}).catch(function(e){toast('删除失败: '+e.message,true)});
+}
+
+// ====== 合同配件 ======
+function esc(s){return String(s||'').replace(/[&<>"]/g,function(c){return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]})}
+function statusText2(s){var m={dispatched:'已派单',accepted:'已接单',submitted:'已提交明细',in_progress:'维修中',completed:'已完成',verified:'已验收',rejected:'已驳回'};return m[s]||s}
+// 维修单详情弹窗
+async function showRepairDetail(oid){
+  try {
+    var o = await api('GET','/api/repairs/'+oid);
+    if(!o) return toast('加载失败',true);
+    var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:600px;"><h3>🔧 维修单 #'+o.id+' 详情</h3>'+
+      '<table style="width:100%;"><tr><td style="color:#888;width:80px;">车牌号</td><td><strong>'+esc(o.plate_number)+'</strong></td></tr>'+
+      '<tr><td style="color:#888;">状态</td><td>'+statusText2(o.status)+'</td></tr>'+
+      '<tr><td style="color:#888;">修理厂</td><td>'+esc(o.shop_name||'-')+'</td></tr>'+
+      '<tr><td style="color:#888;">描述</td><td>'+esc(o.description||'-')+'</td></tr>'+
+      '<tr><td style="color:#888;">创建时间</td><td style="font-size:13px;">'+(o.created_at||'').substring(0,19)+'</td></tr></table>';
+    if(o.details && o.details.length) {
+      html += '<h4 style="margin-top:12px;color:#888;">维修明细</h4><table><tr><th>项目</th><th>描述</th><th>配件</th><th>费用</th></tr>';
+      for(var i=0;i<o.details.length;i++) {
+        var d = o.details[i];
+        html += '<tr><td>'+esc(d.item_name)+'</td><td>'+esc(d.item_desc||'')+'</td><td>'+esc(d.parts_used||'')+'</td><td>'+d.cost+'元</td></tr>';
+      }
+      html += '</table>';
+    }
+    if(hasPerm('repair.detail_upload') && (o.status==='accepted'||o.status==='step_3')) {
+      html += '<div style="text-align:right;margin-top:12px;"><button class="btn btn-primary" onclick="showRepairUploadForm('+o.id+')">📝 上传明细</button></div>';
+    }
+    html += '<div style="text-align:right;margin-top:12px;"><button class="btn btn-secondary" onclick="closeOverlay()">关闭</button></div></div></div>';
+    var d = document.createElement('div'); d.innerHTML = html; document.body.appendChild(d.firstElementChild);
+  } catch(e) { toast('加载失败: '+e.message, true); }
+}
+async function showRepairUploadForm(oid){
+  closeOverlay();
+  var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:500px;"><h3>📝 上传维修明细</h3>'+
+    '<div class="form-group"><label>维修项目</label><input id="rd-item" placeholder="例：更换机油" /></div>'+
+    '<div class="form-group"><label>项目描述</label><textarea id="rd-desc" rows="2" placeholder="维修过程描述"></textarea></div>'+
+    '<div class="form-group"><label>使用配件</label><textarea id="rd-parts" rows="2" placeholder="例如：机油 4L, 机滤 1个"></textarea></div>'+
+    '<div class="form-group"><label>费用（元）</label><input id="rd-cost" type="number" step="0.01" value="0" /></div>'+
+    '<div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveRepairDetail('+oid+')" style="margin-left:8px;">✅ 保存</button></div></div></div>';
+  var d = document.createElement('div'); d.innerHTML = html; document.body.appendChild(d.firstElementChild);
+}
+async function saveRepairDetail(oid){
+  var item = document.getElementById('rd-item').value.trim();
+  if(!item) return toast('请输入维修项目', true);
+  var desc = document.getElementById('rd-desc').value.trim();
+  var parts = document.getElementById('rd-parts').value.trim();
+  var cost = parseFloat(document.getElementById('rd-cost').value) || 0;
+  api('PUT','/api/repairs/'+oid+'/details', {
+    items: [{item_name:item, item_desc:desc, parts_used:parts, cost:cost}]
+  }).then(function(){
+    closeOverlay(); toast('✅ 明细已保存');
+  }).catch(function(e){toast('保存失败: '+e.message,true)});
+}
+function uploadOne(file){var fd=new FormData();fd.append('file',file);return fetch(BASE+'/api/inspections/upload',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd}).then(function(r){if(!r.ok)throw new Error('上传失败');return r.json()}).then(function(d){return d.url})}
+function uploadFiles(inputId){var el=document.getElementById(inputId);var fs=el&&el.files?Array.prototype.slice.call(el.files):[];var chain=Promise.resolve([]);fs.forEach(function(f){chain=chain.then(function(arr){return uploadOne(f).then(function(url){arr.push({url:url,desc:f.name});return arr})})});return chain.then(function(arr){return JSON.stringify(arr)})}
+
+function page_contract(el){
+  var btns = '';
+  if(hasPerm('contract_part.create')) btns += '<button class="btn btn-primary" onclick="showContractPartForm()">+ 添加配件</button>';
+  if(hasPerm('contract_part.import')) btns += '<button class="btn btn-secondary" onclick="showContractImport()">📥 Excel导入</button>';
+  if(hasPerm('contract_part.import')) btns += '<button class="btn btn-secondary" onclick="downloadContractTemplate()">📄 下载模板</button>';
+  if(hasPerm('contract.view')) btns += '<button class="btn btn-secondary" onclick="showContractMgr()">📄 管理合同</button>';
+  el.innerHTML='<div class="page-title">📦 合同配件</div>'+
+    '<div class="card"><div class="filter-bar"><div class="form-group"><label>选择合同</label><select id="cp-contract" onchange="loadContractParts()"><option value="">全部合同（含未归类）</option></select></div><div class="form-group"><label>搜索配件</label><input id="cpq" placeholder="配件名称/车型" /></div><button class="btn btn-primary" onclick="loadContractParts()">🔍 查询</button>'+btns+'</div></div>'+
+    '<div class="card" id="cpw"><p class="loading">加载中...</p></div>';
+  loadContracts(); loadContractParts();
+}
+function loadContracts(){api('GET','/api/contracts').then(function(list){var sel=document.getElementById('cp-contract');if(!sel)return;var cur=sel.value;sel.innerHTML='<option value="">全部合同（含未归类）</option>';for(var i=0;i<list.length;i++){var c=list[i];sel.innerHTML+='<option value="'+c.id+'" '+(cur==String(c.id)?'selected':'')+'>'+esc(c.name||'合同#'+c.id)+(c.is_active?' ★':'')+'</option>'}}).catch(function(){/*silent*/})}
+function loadContractParts(){var q=document.getElementById('cpq')?document.getElementById('cpq').value:'';var cid=document.getElementById('cp-contract')?document.getElementById('cp-contract').value:'';var url='/api/contract-parts?';if(q)url+='q='+encodeURIComponent(q)+'&';if(cid)url+='contract_id='+cid;api('GET',url).then(function(items){var h='<table><tr><th>ID</th><th>车型</th><th>配件名称</th><th>型号</th><th>配件价格</th><th>工时费</th><th>合计金额</th><th>质保(天)</th><th>备注</th><th>操作</th></tr>';for(var i=0;i<items.length;i++){var x=items[i];var ops='';if(hasPerm('contract_part.edit'))ops+='<button class="btn btn-sm btn-secondary" onclick="showContractPartForm('+x.id+')">编辑</button>';if(hasPerm('contract_part.delete'))ops+='<button class="btn btn-sm btn-danger" onclick="delContractPart('+x.id+')">删除</button>';h+='<tr><td>'+x.id+'</td><td>'+esc(x.vehicle_model||'')+'</td><td>'+esc(x.part_name)+'</td><td>'+esc(x.part_model)+'</td><td>'+x.contract_price+'元</td><td>'+x.labor_fee+'元</td><td><strong>'+x.total_amount+'元</strong></td><td>'+x.warranty_days+'</td><td>'+esc(x.notes)+'</td><td>'+ops+'</td></tr>'}h+='</table>';if(!items.length)h='<p style="text-align:center;padding:20px;color:#555;">暂无数据</p>';document.getElementById('cpw').innerHTML=h}).catch(function(e){document.getElementById('cpw').innerHTML='<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'})}
+
+// ====== 合同管理 ======
+function showContractMgr(){api('GET','/api/contracts').then(function(list){var html='<div class="modal-overlay"><div class="modal-content" style="max-width:600px;"><h3>📄 合同管理</h3>';if(hasPerm('contract.create'))html+='<div style="margin-bottom:12px;"><button class="btn btn-primary" onclick="showContractForm()">+ 新建合同</button></div>';html+='<table><tr><th>ID</th><th>名称</th><th>备注</th><th>状态</th><th>操作</th></tr>';for(var i=0;i<list.length;i++){var c=list[i];var ops='';if(!c.is_active&&hasPerm('contract.activate'))ops+='<button class="btn btn-sm btn-primary" onclick="activateContract('+c.id+')">启用</button> ';if(hasPerm('contract.edit'))ops+='<button class="btn btn-sm btn-secondary" onclick="showContractForm('+c.id+',\''+esc(c.name)+'\',\''+esc(c.notes)+'\')">编辑</button> ';if(hasPerm('contract.delete'))ops+='<button class="btn btn-sm btn-danger" onclick="delContract('+c.id+')">删除</button>';html+='<tr><td>'+c.id+'</td><td>'+esc(c.name)+'</td><td>'+esc(c.notes)+'</td><td>'+(c.is_active?'<span style="color:#81C784;">已启用</span>':'<span style="color:#888;">未启用</span>')+'</td><td>'+ops+'</td></tr>'}html+='</table>';if(!list.length)html+='<p style="text-align:center;color:#555;padding:12px;">暂无合同</p>';html+='<div style="text-align:right;margin-top:12px;"><button class="btn btn-secondary" onclick="closeOverlay()">关闭</button></div></div></div>';var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild)}).catch(function(e){toast('加载失败: '+e.message,true)})}
+function showContractForm(id,name,notes){var html='<div class="modal-overlay"><div class="modal-content" style="max-width:400px;"><h3>'+(id?'编辑合同':'新建合同')+'</h3><div class="form-group"><label>合同名称</label><input id="cname" value="'+esc(name||'')+'" placeholder="例：2025年维修合同" /></div><div class="form-group"><label>备注</label><textarea id="cnotes" rows="3" style="width:100%;background:#2A2A3E;border:1px solid #3A3A4E;color:#E0E0E0;padding:8px;border-radius:6px;">'+esc(notes||'')+'</textarea></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveContract('+(id||0)+')" style="margin-left:8px;">保存</button></div></div></div>';var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild)}
+function saveContract(id){var body={name:document.getElementById('cname').value.trim(),notes:document.getElementById('cnotes').value.trim()};var p=id?api('PUT','/api/contracts/'+id,body):api('POST','/api/contracts',body);p.then(function(){closeOverlay();toast(id?'已更新':'已创建');loadContracts();}).catch(function(e){toast('保存失败: '+e.message,true)})}
+function activateContract(id){api('POST','/api/contracts/'+id+'/activate').then(function(){closeOverlay();toast('已启用');loadContracts();loadContractParts();}).catch(function(e){toast('启用失败: '+e.message,true)})}
+function delContract(id){if(!confirm('确认删除此合同？所属配件不会删除，但会变为未归类。'))return;api('DELETE','/api/contracts/'+id).then(function(){closeOverlay();toast('已删除');loadContracts();}).catch(function(e){toast('删除失败: '+e.message,true)})}
+
+function showContractPartForm(id){var load=id?api('GET','/api/contract-parts').then(function(a){return a.find(function(x){return x.id===id})||{}}):Promise.resolve({});load.then(function(x){var cid=document.getElementById('cp-contract')?document.getElementById('cp-contract').value:'';var d=document.createElement('div');d.innerHTML='<div class="modal-overlay"><div class="modal-content"><h3>'+(id?'编辑':'添加')+'合同配件</h3><div class="form-group"><label>车型 *</label><input id="cpv" value="'+esc(x.vehicle_model||'')+'" placeholder="例：大众迈腾" /></div><div class="form-group"><label>配件名称 *</label><input id="cp2" value="'+esc(x.part_name||'')+'" /></div><div class="form-group"><label>配件型号</label><input id="cp3" value="'+esc(x.part_model||'')+'" /></div><div class="row"><div class="form-group"><label>配件价格</label><input id="cp4" type="number" step="0.01" value="'+(x.contract_price||0)+'" /></div><div class="form-group"><label>工时费</label><input id="cp7" type="number" step="0.01" value="'+(x.labor_fee||0)+'" /></div></div><div class="row"><div class="form-group"><label>合计金额</label><input id="cp8" type="number" step="0.01" value="'+(x.total_amount||0)+'" /></div><div class="form-group"><label>质保天数</label><input id="cp5" type="number" value="'+(x.warranty_days||0)+'" /></div></div><div class="form-group"><label>备注</label><input id="cp6" value="'+esc(x.notes||'')+'" /></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveContractPart('+(id||0)+')" style="margin-left:8px;">保存</button></div></div></div>';document.body.appendChild(d.firstElementChild)})}
+function saveContractPart(id){var body={vehicle_model:document.getElementById('cpv').value.trim(),part_name:document.getElementById('cp2').value.trim(),part_model:document.getElementById('cp3').value.trim(),contract_price:parseFloat(document.getElementById('cp4').value)||0,labor_fee:parseFloat(document.getElementById('cp7').value)||0,total_amount:parseFloat(document.getElementById('cp8').value)||0,warranty_days:parseInt(document.getElementById('cp5').value)||0,notes:document.getElementById('cp6').value.trim()};var cid=document.getElementById('cp-contract')?document.getElementById('cp-contract').value:'';if(cid)body.contract_id=parseInt(cid);if(!body.part_name){toast('请输入配件名称',true);return}var p=id?api('PUT','/api/contract-parts/'+id,body):api('POST','/api/contract-parts',body);p.then(function(){closeOverlay();loadContractParts();toast(id?'已更新':'已添加')}).catch(function(e){toast('保存失败: '+e.message,true)})}
+function delContractPart(id){if(!confirm('确认删除此合同配件？'))return;api('DELETE','/api/contract-parts/'+id).then(function(){loadContractParts();toast('已删除')}).catch(function(e){toast('删除失败: '+e.message,true)})}
+function downloadContractTemplate(){window.open(BASE+'/api/contract-parts/template.xlsx','_blank')}
+function showContractImport(){var d=document.createElement('div');d.innerHTML='<div class="modal-overlay"><div class="modal-content" style="max-width:460px;"><h3>📥 Excel导入合同配件</h3><p style="color:#888;font-size:13px;margin-bottom:12px;">先下载模板填写，再上传导入。<br>必填列：<strong>车型、配件名称、配件价格、工时费、合计金额</strong></p><div class="form-group"><label>选择 Excel 文件</label><input id="cp-file" type="file" accept=".xlsx" /></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="doContractImport()" style="margin-left:8px;">上传导入</button></div></div></div>';document.body.appendChild(d.firstElementChild)}
+function doContractImport(){var el=document.getElementById('cp-file');if(!el||!el.files||!el.files[0]){toast('请选择文件',true);return}var fd=new FormData();fd.append('file',el.files[0]);var cid=document.getElementById('cp-contract')?document.getElementById('cp-contract').value:'';var url='/api/contract-parts/import/xlsx';if(cid)url+='?contract_id='+cid;fetch(BASE+url,{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd}).then(function(r){if(!r.ok)return r.json().then(function(d){throw new Error(d.detail||'导入失败')});return r.json()}).then(function(d){closeOverlay();loadContractParts();toast('导入完成：成功 '+d.imported+' 条，跳过 '+d.skipped+' 条')}).catch(function(e){toast('导入失败: '+e.message,true)})}
+
+// ====== 操作日志 ======
+function page_logs(el){
+  el.innerHTML='<div class="page-title">📝 操作日志</div><div class="card"><div class="toolbar"><label style="color:#888;margin-right:8px;">类型筛选:</label><select id="log-type" onchange="loadLogs()"><option value="">全部</option><option value="user">用户</option><option value="group">分组</option><option value="vehicle">车辆</option><option value="inspection">日检</option><option value="repair">维修</option><option value="contract">合同</option><option value="contract_part">合同配件</option><option value="repair_flow">维修流程</option><option value="settings">系统设置</option></select><span style="color:#555;margin-left:12px;font-size:13px;" id="log-count"></span></div></div><div class="card" id="log-list"><p class="loading">加载中...</p></div><div class="card" id="log-pager" style="text-align:center;display:none;"><button class="btn btn-sm btn-secondary" onclick="prevLogPage()">← 上一页</button><span id="log-page-info" style="margin:0 12px;color:#888;"></span><button class="btn btn-sm btn-secondary" onclick="nextLogPage()">下一页 →</button></div>';
+  window._logPage=1;loadLogs();
+}
+function loadLogs(){
+  var type=document.getElementById('log-type').value;
+  api('GET','/api/logs?page='+window._logPage+'&size=50'+(type?'&target_type='+type:'')).then(function(d){
+    var h='<table><tr><th>时间</th><th>操作人</th><th>操作内容</th><th>类型</th></tr>';
+    if(d.items&&d.items.length){d.items.forEach(function(o){h+='<tr><td style="white-space:nowrap;font-size:13px;">'+ (o.created_at?o.created_at.substring(0,19):'') +'</td><td><strong>'+esc(o.user_name||o.username)+'</strong></td><td>'+esc(o.action)+'</td><td>'+ (o.target_type||'') +'</td></tr>'});}else{h='<tr><td colspan="4" style="text-align:center;padding:30px;color:#555;">暂无日志</td></tr>'}
+    h+='</table>';
+    document.getElementById('log-list').innerHTML=h;
+    var total=d.total||0;
+    document.getElementById('log-count').textContent='共 '+total+' 条';
+    var pages=Math.ceil(total/50);
+    document.getElementById('log-page-info').textContent='第 '+window._logPage+'/'+pages+' 页';
+    document.getElementById('log-pager').style.display=pages>1?'block':'none';
+  }).catch(function(e){document.getElementById('log-list').innerHTML='<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'});
+}
+function prevLogPage(){if(window._logPage>1){window._logPage--;loadLogs()}}
+function nextLogPage(){window._logPage++;loadLogs()}
+
+// ====== 角色管理（权限勾选）=======
+function page_roles(el){
+  el.innerHTML='<div class="page-title">🔐 角色管理</div><div class="card"><div class="toolbar"><button class="btn btn-primary" onclick="showRoleForm()">+ 新建角色</button></div></div><div class="card" id="role-list"><p class="loading">加载中...</p></div>';
+  loadRoles();
+}
+function loadRoles(){
+  api('GET','/api/roles').then(function(roles){
+    var scopeMap={all:'全部数据',group:'本组数据',self:'自己/指派'};
+    var h='<table><tr><th>ID</th><th>角色名</th><th>显示名称</th><th>数据范围</th><th>权限数</th><th>操作</th></tr>';
+    for(var i=0;i<roles.length;i++){var r=roles[i];h+='<tr><td>'+r.id+'</td><td>'+esc(r.name)+'</td><td>'+esc(r.display_name)+'</td><td>'+(scopeMap[r.data_scope]||r.data_scope||'全部')+'</td><td>'+(r.permissions?r.permissions.length:0)+'</td><td><button class="btn btn-sm btn-secondary" onclick="showRolePerms('+r.id+')">配置权限</button><button class="btn btn-sm btn-secondary" onclick="showRoleForm('+r.id+',\''+esc(r.display_name)+'\',\''+(r.data_scope||'all')+'\')">编辑</button>'+(r.is_system?'':'<button class="btn btn-sm btn-danger" onclick="delRole('+r.id+')">删除</button>')+'</td></tr>';}
+    h+='</table>';
+    if(!roles.length)h='<p style="text-align:center;padding:20px;color:#555;">暂无角色</p>';
+    document.getElementById('role-list').innerHTML=h;
+  }).catch(function(e){document.getElementById('role-list').innerHTML='<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'});
+}
+function showRoleForm(rid,dname,scope){
+  var html='<div class="modal-overlay"><div class="modal-content" style="max-width:420px;"><h3>'+(rid?'编辑角色':'新建角色')+'</h3><div class="form-group"><label>角色标识</label><input id="rf-name" value="'+esc('')+'" placeholder="英文标识如 vip_manager" /></div><div class="form-group"><label>显示名称</label><input id="rf-dname" value="'+esc(dname||'')+'" placeholder="如「VIP客户经理」" /></div><div class="form-group"><label>数据范围</label><select id="rf-scope"><option value="all" '+(scope==='all'?'selected':'')+'>全部数据</option><option value="group" '+(scope==='group'?'selected':'')+'>本组数据</option><option value="self" '+(scope==='self'?'selected':'')+'>自己/指派</option></select><span style="color:#888;font-size:12px;margin-left:8px;">决定能看到哪些数据</span></div><div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button><button class="btn btn-primary" onclick="saveRole('+(rid||0)+')" style="margin-left:8px;">保存</button></div></div></div>';
+  var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+}
+function saveRole(rid){
+  var name=document.getElementById('rf-name').value.trim();
+  var dname=document.getElementById('rf-dname').value.trim();
+  var scope=document.getElementById('rf-scope').value;
+  if(!name){toast('角色标识不能为空',true);return}
+  var p=rid?api('PUT','/api/roles/'+rid,{name:name,display_name:dname,data_scope:scope}):api('POST','/api/roles',{name:name,display_name:dname,data_scope:scope});
+  p.then(function(){closeOverlay();loadRoles();toast(rid?'已更新':'已创建')}).catch(function(e){toast('保存失败: '+e.message,true)});
+}
+function delRole(rid){
+  if(!confirm('确认删除此角色？'))return;
+  api('DELETE','/api/roles/'+rid).then(function(){loadRoles();toast('已删除')}).catch(function(e){toast('删除失败: '+e.message,true)});
+}
+
+// 权限配置弹窗
+function showRolePerms(rid){
+  api('GET','/api/roles/'+rid+'/permissions').then(function(data){
+    var curPerms=data.permissions||[];
+    api('GET','/api/roles/definitions').then(function(mods){
+      var html='<div class="modal-overlay"><div class="modal-content" style="max-width:650px;"><h3>配置权限</h3><div style="max-height:500px;overflow-y:auto;">';
+      var keys=Object.keys(mods);
+      for(var mi=0;mi<keys.length;mi++){
+        var mod=keys[mi];
+        var perms=mods[mod];
+        html+='<div class="form-group"><label style="font-weight:bold;color:#E82337;margin-bottom:6px;">'+mod+'</label><div style="display:flex;flex-wrap:wrap;gap:4px;">';
+        for(var pi=0;pi<perms.length;pi++){
+          var p=perms[pi];
+          var checked=curPerms.includes(p.key)?'checked':'';
+          html+='<label style="display:inline-flex;align-items:center;gap:4px;padding:4px 8px;background:#2A2A3E;border-radius:4px;cursor:pointer;font-size:13px;"><input type="checkbox" value="'+p.key+'" '+checked+' onchange="onPermChange('+rid+')" class="perm-cb" /> '+p.name+'</label>';
+        }
+        html+='</div></div>';
+      }
+      html+='</div><div style="text-align:right;margin-top:12px;"><button class="btn btn-primary" onclick="savePerms('+rid+')">保存权限</button><button class="btn btn-secondary" onclick="closeOverlay()" style="margin-left:8px;">取消</button></div></div></div>';
+      var d=document.createElement('div');d.innerHTML=html;document.body.appendChild(d.firstElementChild);
+    });
+  }).catch(function(e){toast('加载失败: '+e.message,true)});
+}
+function onPermChange(rid){/* 实时勾选标记，保存时统一读取 */}
+function savePerms(rid){
+  var cbs=document.querySelectorAll('.perm-cb:checked');
+  var perms=[];
+  cbs.forEach(function(cb){perms.push(cb.value)});
+  api('PUT','/api/roles/'+rid+'/permissions',{permissions:perms}).then(function(){closeOverlay();loadRoles();toast('权限已更新')}).catch(function(e){toast('保存失败: '+e.message,true)});
+}
+
+// ====== 接单工作台（汽修厂专用）=======
+function page_repair_workbench(el){
+  el.innerHTML='<div class="page-title">🏪 接单工作台</div><div class="card"><div class="toolbar"><span style="color:#888;">待接单</span></div></div><div class="card" id="wk-pending"><p class="loading">加载中...</p></div><div class="card" style="margin-top:12px;"><div class="toolbar"><span style="color:#888;">进行中</span></div></div><div class="card" id="wk-active"><p class="loading">加载中...</p></div>';
+  loadWorkbench();
+}
+function loadWorkbench(){
+  api('GET','/api/repairs?page=1&size=100').then(function(d){
+    var items=d.items||[];
+    var pending=items.filter(function(o){return o.status==='dispatched'||o.status==='step_2'||o.status==='step_1'});
+    var active=items.filter(function(o){return o.status==='accepted'||o.status==='in_progress'||o.status==='step_3'||o.status==='step_4'});
+    // 待接单
+    var h='<table><tr><th>车牌号</th><th>描述</th><th>派单时间</th><th>操作</th></tr>';
+    if(pending.length){pending.forEach(function(o){
+      var act='';
+      if(hasPerm('repair.accept')) act='<button class="btn btn-sm btn-primary" onclick="acceptFromWorkbench('+o.id+')">接单</button>';
+      h+='<tr><td>'+esc(o.plate_number)+'</td><td>'+esc(o.description||'').substring(0,30)+'</td><td style="font-size:13px;">'+(o.created_at||'').substring(0,19)+'</td><td>'+act+'</td></tr>';
+    })}else{h+='<tr><td colspan="4" style="text-align:center;padding:20px;color:#555;">暂无待接单</td></tr>'}
+    h+='</table>';
+    document.getElementById('wk-pending').innerHTML=h;
+    // 进行中
+    var h2='<table><tr><th>车牌号</th><th>状态</th><th>描述</th><th>操作</th></tr>';
+    if(active.length){active.forEach(function(o){
+      var st=o.status;
+      var actions='';
+      if((st==='accepted'||st==='step_3')&&hasPerm('repair.detail_upload')) actions='<button class="btn btn-sm btn-secondary" onclick="showRepairDetail('+o.id+')">上传明细</button>';
+      else if((st==='in_progress'||st==='step_4')&&hasPerm('repair.complete')) actions='<button class="btn btn-sm btn-success" onclick="completeFromWorkbench('+o.id+')">完成维修</button>';
+      h2+='<tr><td>'+esc(o.plate_number)+'</td><td>'+statusText2(o.status)+'</td><td>'+esc(o.description||'').substring(0,30)+'</td><td>'+actions+'</td></tr>';
+    })}else{h2+='<tr><td colspan="4" style="text-align:center;padding:20px;color:#555;">暂无进行中的维修</td></tr>'}
+    h2+='</table>';
+    document.getElementById('wk-active').innerHTML=h2;
+  }).catch(function(e){document.getElementById('wk-pending').innerHTML='<p style="text-align:center;padding:20px;color:#EF9A9A;">加载失败: '+e.message+'</p>'});
+}
+function acceptFromWorkbench(oid){
+  api('PUT','/api/repairs/'+oid+'/accept',{accept_photos:'[]'}).then(function(){loadWorkbench();toast('已接单')}).catch(function(e){toast('接单失败: '+e.message,true)});
+}
+function completeFromWorkbench(oid){
+  api('PUT','/api/repairs/'+oid+'/complete').then(function(){loadWorkbench();toast('已标记完成')}).catch(function(e){toast('标记失败: '+e.message,true)});
+}
+
+// ====== 系统设置 ======
+async function page_settings(el) {
+  el.innerHTML = `<div class="page-title">⚙️ 系统设置</div><div class="card"><p>加载中...</p></div>`;
+  try {
+    const s = await api('GET','/api/settings') || {};
+    var sets = s.settings || s;
+    var siteTitle = sets.SITE_TITLE || '车辆管理系统';
+    var ocrOn = sets.OCR_ENABLED === 'true' || sets.OCR_ENABLED === true;
+    var dataDir = sets.DATA_DIR || sets.UPLOAD_DIR || '-';
+    var port = sets.PORT || '8700';
+    var thr = sets.MILEAGE_THRESHOLD || '5000';
+    el.innerHTML = `<div class="page-title">⚙️ 系统设置</div>
+      <div class="card">
+        <div class="form-group"><label>网站标题</label>
+          <div style="display:flex;gap:8px;"><input id="set-title" value="${siteTitle}" style="flex:1;" /><button class="btn btn-primary btn-sm" onclick="saveSiteTitle()">保存</button></div></div>
+        <div class="form-group"><label>OCR 里程识别</label>
+          <select id="set-ocr"><option value="true" ${ocrOn?'selected':''}>开启</option><option value="false" ${!ocrOn?'selected':''}>关闭</option></select>
+          <button class="btn btn-primary btn-sm" style="margin-top:4px;" onclick="saveOcrSetting()">保存</button></div>
+        <div class="form-group"><label>数据目录</label><input value="${dataDir}" disabled /></div>
+        <div class="row"><div class="form-group"><label>监听端口</label><input value="${port}" disabled /></div>
+        <div class="form-group"><label>里程阈值(公里)</label>
+          <div style="display:flex;gap:8px;"><input id="set-mileage-threshold" value="${thr}" style="flex:1;" type="number" min="0" max="999999" /><button class="btn btn-primary btn-sm" onclick="saveMileageThreshold()">保存</button></div></div></div>
+        <div style="margin-top:12px;color:#888;font-size:13px;"><p>⚠️ 部分配置需重启应用生效。</p></div>
+      </div>
+      <div class="card"><h3>🖼️ OCR 测试</h3>
+        <p style="color:#888;font-size:13px;margin-bottom:8px;">上传里程表照片，测试识别效果</p>
+        <input type="file" id="ocr-test-file" accept="image/*" style="width:auto;" onchange="ocrTest()" />
+        <div id="ocr-test-result" style="margin-top:8px;font-size:14px;"></div>
+      </div>
+      <!-- 全量备份 -->
+      <div class="card" style="margin-top:16px;">
+        <h4 style="margin-top:0;">⏰ 自动备份（全量）</h4>
+        <p style="color:#888;font-size:12px;">备份整个数据库+照片，文件名为 <code>auto-backup-时间.tar.gz</code>，导入前自动预备份。</p>
+        <div class="row">
+          <div class="form-group"><label>备份目录</label><input id="s-bak-dir" value="${sets.BACKUP_DIR || '/vol2/1000/AI/车辆管理-备份'}" style="width:280px;" placeholder="填写完整路径" /></div>
+        </div>
+        <div class="row">
+          <div class="form-group"><label>间隔(小时)</label><input id="s-bak-interval" value="${sets.BACKUP_INTERVAL_HOURS || '24'}" style="width:80px;" /></div>
+          <div class="form-group"><label>保留(个)</label><input id="s-bak-retention" value="${sets.BACKUP_RETENTION || '7'}" style="width:80px;" /></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+            <button class="btn btn-secondary" onclick="saveBackupSettings()" style="font-size:12px;">💾 保存</button>
+          </div>
+        </div>
+        <div id="backup-files" style="margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="doBackup()">📥 下载备份</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 导入备份</button>
+          <input type="file" id="import-file" accept=".tar.gz,.tgz" style="display:none" onchange="doImportBackup(this)" />
+          <button class="btn btn-secondary" onclick="doAutoFullBackup()">🔄 立即执行</button>
+        </div>
+        <div id="backup-status" style="margin-top:8px;font-size:13px;"></div>
+      </div>
+      <!-- 增量备份 -->
+      <div class="card" style="margin-top:16px;">
+        <h4 style="margin-top:0;">📦 定期增量备份</h4>
+        <p style="color:#888;font-size:12px;">按时间范围导出业务数据（不含照片），导入冲突自动保留最新。</p>
+        <div class="row">
+          <div class="form-group"><label>启用</label>
+            <select id="s-reg-enabled" style="width:80px;"><option value="true" ${sets.REGULAR_BACKUP_ENABLED !== 'false' ? 'selected' : ''}>是</option>
+            <option value="false" ${sets.REGULAR_BACKUP_ENABLED === 'false' ? 'selected' : ''}>否</option></select>
+          </div>
+          <div class="form-group"><label>间隔(小时)</label><input id="s-reg-interval" value="${sets.REGULAR_BACKUP_INTERVAL_HOURS || '168'}" style="width:80px;" title="默认 168h=7天" /></div>
+          <div class="form-group"><label>每次备份(N天内)</label><input id="s-reg-days" value="${sets.REGULAR_BACKUP_DAYS || '30'}" style="width:80px;" /></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+            <button class="btn btn-secondary" onclick="saveRegBackupSettings()" style="font-size:12px;">💾 保存</button>
+          </div>
+        </div>
+        <div id="reg-backup-files" style="margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="doRegBackup()">📥 导出增量</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('import-reg-file').click()">📤 导入增量</button>
+          <input type="file" id="import-reg-file" accept=".tar.gz,.tgz" style="display:none" onchange="doRegImportBackup(this)" />
+        </div>
+        <div id="reg-backup-status" style="margin-top:6px;font-size:13px;"></div>
+      </div>`;
+    setTimeout(function(){ loadBackupFiles(); }, 200);
+  } catch(e) { el.innerHTML = `<div class="page-title">⚙️ 系统设置</div><div class="card"><p>加载失败: ${e.message}</p></div>`; }
+}
+async function saveSiteTitle() {
+  var v = document.getElementById('set-title')?.value;
+  if(!v) return toast('请输入标题',true);
+  try {
+    var r = await api('PUT','/api/settings',{key:'SITE_TITLE',value:v});
+    if(r) { document.title = v; var t=document.getElementById('page-title'); if(t) t.textContent=v; toast('网站标题已更新'); }
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function saveOcrSetting() {
+  var v = document.getElementById('set-ocr')?.value;
+  try {
+    var r = await api('PUT','/api/settings',{key:'OCR_ENABLED',value:v});
+    if(r) toast('OCR 设置已更新，重启应用后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function saveMileageThreshold() {
+  var v = document.getElementById('set-mileage-threshold')?.value;
+  if(!v || isNaN(v)) return toast('请输入有效数字',true);
+  try {
+    var r = await api('PUT','/api/settings',{key:'MILEAGE_THRESHOLD',value:v});
+    if(r) toast('里程阈值已更新，重启应用后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function ocrTest() {
+  var f = document.getElementById('ocr-test-file');
+  if(!f || !f.files || !f.files[0]) return;
+  var file = f.files[0];
+  var fd = new FormData();
+  fd.append('file', file);
+  document.getElementById('ocr-test-result').innerHTML = '<span style="color:#888;">识别中...</span>';
+  try {
+    var r = await fetch(BASE + '/api/ocr/recognize', { method:'POST', headers:{'Authorization':'Bearer '+TOKEN}, body:fd });
+    var d = await r.json();
+    if(d.recognized) {
+      document.getElementById('ocr-test-result').innerHTML = '<span style="color:#81C784;font-size:18px;font-weight:bold;">✅ 识别结果: ' + d.mileage + ' 公里</span>';
+    } else {
+      document.getElementById('ocr-test-result').innerHTML = '<span style="color:#EF9A9A;">❌ 未识别出有效里程，请换一张照片试试</span>';
+    }
+  } catch(e) { document.getElementById('ocr-test-result').innerHTML = '<span style="color:#EF9A9A;">请求失败: '+e.message+'</span>'; }
+}
+// ========== 备份功能 ==========
+async function saveBackupSettings() {
+  try {
+    await api('PUT','/api/settings',{key:'BACKUP_DIR',value:document.getElementById('s-bak-dir').value});
+    await api('PUT','/api/settings',{key:'BACKUP_INTERVAL_HOURS',value:document.getElementById('s-bak-interval').value});
+    await api('PUT','/api/settings',{key:'BACKUP_RETENTION',value:document.getElementById('s-bak-retention').value});
+    toast('备份设置已保存，重启后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function saveRegBackupSettings() {
+  try {
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_ENABLED',value:document.getElementById('s-reg-enabled').value});
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_INTERVAL_HOURS',value:document.getElementById('s-reg-interval').value});
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_DAYS',value:document.getElementById('s-reg-days').value});
+    toast('增量备份设置已保存，重启后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function loadBackupFiles() {
+  try {
+    var d = await api('GET','/api/backup/list');
+    if(!d) return;
+    var files = d.backups || [];
+    var el = document.getElementById('backup-files');
+    if(!el) return;
+    if(files.length===0) { el.innerHTML='<p style="color:#555;font-size:12px;">暂无备份文件</p>'; return; }
+    var h='<table><tr><th>文件名</th><th>大小</th><th>操作</th></tr>';
+    for(var i=0;i<files.length;i++){
+      var f=files[i];
+      var sz = f.size ? (f.size/1024/1024).toFixed(1)+' MB' : '-';
+      h+='<tr><td>'+f.name+'</td><td>'+sz+'</td><td><button class="btn btn-sm btn-primary" onclick="downloadBackup(\''+f.name+'\')">📥</button> <button class="btn btn-sm btn-danger" onclick="deleteBackup(\''+f.name+'\')">🗑️</button></td></tr>';
+    }
+    h+='</table>';
+    el.innerHTML = h;
+  } catch(e) {}
+}
+async function downloadBackup(name) {
+  window.open(BASE+'/api/backup/download/'+encodeURIComponent(name));
+}
+async function deleteBackup(name) {
+  if(!confirm('确认删除 '+name+'?')) return;
+  try {
+    await api('DELETE','/api/backup/'+encodeURIComponent(name));
+    toast('已删除');
+    loadBackupFiles();
+  } catch(e) { toast('删除失败: '+e.message,true); }
+}
+async function doBackup() {
+  var btn = event.target;
+  btn.disabled = true;
+  document.getElementById('backup-status').innerHTML = '<span style="color:#888;">备份中...</span>';
+  try {
+    var d = await api('POST','/api/backup/create');
+    if(d && d.path) toast('备份完成: '+d.path.split('/').pop());
+    else toast('备份完成');
+    loadBackupFiles();
+    document.getElementById('backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  btn.disabled = false;
+}
+async function doAutoFullBackup() {
+  var btn = event.target;
+  btn.disabled = true;
+  document.getElementById('backup-status').innerHTML = '<span style="color:#888;">执行中...</span>';
+  try {
+    var d = await api('POST','/api/backup/trigger-auto');
+    if(d && d.path) toast('自动备份完成: '+d.path.split('/').pop());
+    else toast('自动备份已触发');
+    loadBackupFiles();
+    document.getElementById('backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  btn.disabled = false;
+}
+async function doImportBackup(input) {
+  if(!input || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if(!confirm('导入前将自动创建当前备份。确定导入 '+file.name+' 吗?')) return;
+  var fd = new FormData();
+  fd.append('file',file);
+  document.getElementById('backup-status').innerHTML = '<span style="color:#888;">导入中...</span>';
+  try {
+    var d = await fetch(BASE+'/api/backup/import',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+    var r = await d.json();
+    if(d.ok) { toast('导入成功'); loadBackupFiles(); }
+    else throw new Error(r.detail||'导入失败');
+    document.getElementById('backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  input.value='';
+}
+async function doRegBackup() {
+  var days = document.getElementById('s-reg-days')?.value || 30;
+  document.getElementById('reg-backup-status').innerHTML = '<span style="color:#888;">导出中...</span>';
+  try {
+    var d = await api('POST','/api/regular-backup/export?days='+days);
+    if(d && d.path) toast('增量备份完成: '+d.path.split('/').pop());
+    document.getElementById('reg-backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('reg-backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+}
+async function doRegImportBackup(input) {
+  if(!input || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var fd = new FormData();
+  fd.append('file',file);
+  document.getElementById('reg-backup-status').innerHTML = '<span style="color:#888;">导入中...</span>';
+  try {
+    var d = await fetch(BASE+'/api/regular-backup/import',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+    var r = await d.json();
+    if(d.ok) toast('增量导入成功');
+    else throw new Error(r.detail||'导入失败');
+    document.getElementById('reg-backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('reg-backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  input.value='';
+}
+</script></body></html>

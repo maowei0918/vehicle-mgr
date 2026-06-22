@@ -28,4 +28,4 @@ async def log_operation(
         target_id=target_id,
     )
     db.add(log)
-    # 不 commit，由调用方统一 commit
+    await db.commit()  # 立即写入，确保日志不被遗漏

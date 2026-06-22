@@ -13,7 +13,7 @@ body { font-family:-apple-system,"Microsoft YaHei",sans-serif; background:#0F0F1
 .sidebar a { display:block; padding:12px 20px; color:#888; text-decoration:none; cursor:pointer; font-size:14px; }
 .sidebar a:hover,.sidebar a.active { color:#fff; background:#2A2A3E; }
 .main { flex:1; padding:24px; overflow-y:auto; max-height:100vh; }
-.card { background:#1A1A2E; border-radius:12px; padding:20px; margin-bottom:16px; }
+.card { background:#1A1A2E; border-radius:12px; padding:20px; margin-bottom:16px; overflow-x:auto; }
 table { width:100%; border-collapse:collapse; }
 th,td { padding:10px 12px; text-align:left; border-bottom:1px solid #2A2A3E; font-size:14px; }
 th { color:#888; font-weight:normal; }
@@ -230,11 +230,10 @@ async function showUserForm(data) {
   const groups = await api('GET','/api/groups') || [];
   const roles = await api('GET','/api/roles/simple') || [];
   const html = `<div class="modal-overlay"><div class="modal-content"><h3>${data?'编辑用户':'添加用户'}</h3>
-    <div class="form-group"><label>用户名</label><input id="f-username" value="${data?.username||''}" ${data?'disabled':''} /></div>
+    <div class="form-group"><label>用户名（英文+数字，不可中文）</label><input id="f-username" value="${data?.username||''}" ${data?'disabled':''} pattern="[A-Za-z0-9_]+" /></div>
     <div class="form-group"><label>姓名</label><input id="f-name" value="${data?.name||''}" /></div>
     <div class="form-group"><label>密码${data?'（留空不修改）':''}</label><input id="f-pass" value="${data?'':'123456'}" /></div>
-    <div class="row"><div class="form-group"><label>角色（旧）</label><select id="f-role">${['driver','fleet_manager','repair_shop','admin'].map(r => `<option value="${r}" ${data?.role===r?'selected':''}>${roleName(r)}</option>`).join('')}</select></div>
-    <div class="form-group"><label>新角色</label><select id="f-role-id"><option value="">-- 选择角色 --</option>${roles.map(r => `<option value="${r.id}" ${data?.role_id===r.id?'selected':''}>${r.display_name||r.name}</option>`).join('')}</select></div>
+    <div class="row"><div class="form-group"><label>角色</label><select id="f-role-id"><option value="">-- 选择角色 --</option>${roles.map(r => `<option value="${r.id}" ${data?.role_id===r.id?'selected':''}>${r.display_name||r.name}</option>`).join('')}</select></div>
     <div class="form-group"><label>分组</label><select id="f-group"><option value="">无</option>${groups.map(g => `<option value="${g.id}" ${data?.group_id===g.id?'selected':''}>${g.name}</option>`).join('')}</select></div></div>
     <div class="form-group"><label>手机</label><input id="f-phone" value="${data?.phone||''}" /></div>
     <div style="text-align:right;margin-top:16px;"><button class="btn btn-secondary" onclick="closeOverlay()">取消</button>
@@ -243,14 +242,17 @@ async function showUserForm(data) {
 }
 function showEditUser(id,username,name,role,phone,group_id,role_id) { showUserForm({id,username,name,role,phone,group_id,role_id}); }
 async function doAddUser() {
+  const username=document.getElementById('f-username').value;
+  const name=document.getElementById('f-name').value;
+  if (!username||!name) { toast('用户名和姓名为必填',true); return; }
+  if (!/^[A-Za-z0-9_]+$/.test(username)) { toast('用户名只能包含英文、数字和下划线',true); return; }
   const rid=document.getElementById('f-role-id').value;
-  const data = { username:document.getElementById('f-username').value, name:document.getElementById('f-name').value, password:document.getElementById('f-pass').value||'123456', role:document.getElementById('f-role').value, role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
-  if (!data.username||!data.name) { toast('用户名和姓名为必填',true); return; }
+  const data = { username, name, password:document.getElementById('f-pass').value||'123456', role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
   try { await api('POST','/api/users',data); closeOverlay(); toast('添加成功'); loadUsers(); } catch(e) { toast('添加失败: '+e.message,true); }
 }
 async function doEditUser(id) {
   const rid=document.getElementById('f-role-id').value;
-  const data = { name:document.getElementById('f-name').value, password:document.getElementById('f-pass').value, role:document.getElementById('f-role').value, role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
+  const data = { name:document.getElementById('f-name').value, password:document.getElementById('f-pass').value, role_id:rid?parseInt(rid):null, group_id:parseInt(document.getElementById('f-group').value)||null, phone:document.getElementById('f-phone').value };
   try { await api('PUT','/api/users/'+id,data); closeOverlay(); toast('已更新'); loadUsers(); } catch(e) { toast('更新失败: '+e.message,true); }
 }
 async function deleteUser(id) { if(!confirm('确定删除？')) return; try { await api('DELETE','/api/users/'+id); toast('已删除'); loadUsers(); } catch(e) { toast('删除失败: '+e.message,true); } }
@@ -489,15 +491,16 @@ async function page_new_inspection(el) {
   el.innerHTML = '<div class="page-title">📋 车辆日检</div>'+
     '<div class="card" style="max-width:700px;margin:0 auto;">'+
     '<div class="form-group"><label>车辆 <span style="color:#E82337;">*</span></label><select id="insp-form-vid">'+vopts+'</select></div>'+
-    '<div class="form-group"><label>里程表照片</label>'+
+    '<div class="form-group"><label>里程表（拍照上传）</label>'+
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'+
         '<input type="file" id="insp-form-odo-file" accept="image/*" capture="environment" style="width:auto;" onchange="ocrInspPhoto()" />'+
+        '<span style="color:#888;font-size:13px;">📷 拍照</span>'+
       '</div>'+
       '<div id="insp-form-odo-preview" style="margin-top:4px;font-size:13px;color:#888;"></div>'+
     '</div>'+
     '<div class="row"><div class="form-group"><label>里程数（公里）<span style="color:#E82337;">*</span></label><input id="insp-form-odo" type="number" min="0" placeholder="OCR 结果或手动输入" style="width:100%;" /></div></div>'+
-    '<div class="form-group"><label>外观照片</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
-    '<div class="form-group"><label>驾驶室照片</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>外观（拍照上传）</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /><span style="color:#888;font-size:13px;margin-left:8px;">📷 拍照</span></div>'+
+    '<div class="form-group"><label>驾驶室（拍照上传）</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /><span style="color:#888;font-size:13px;margin-left:8px;">📷 拍照</span></div>'+
     '<div class="form-group"><label>问题描述</label><textarea id="insp-form-issues" rows="3" placeholder="可选，如轮胎气压不足、灯光异常等"></textarea></div>'+
     '<div style="text-align:right;margin-top:16px;">'+
       '<button class="btn btn-secondary" onclick="switchPage(\'inspections\')">取消</button>'+
@@ -558,15 +561,16 @@ async function showInspForm() {
 
   var html = '<div class="modal-overlay"><div class="modal-content" style="max-width:600px;"><h3>📋 新建日检</h3>'+
     '<div class="form-group"><label>车辆 <span style="color:#E82337;">*</span></label><select id="insp-form-vid">'+vopts+'</select></div>'+
-    '<div class="form-group"><label>里程表照片</label>'+
+    '<div class="form-group"><label>里程表（拍照上传）</label>'+
       '<div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">'+
         '<input type="file" id="insp-form-odo-file" accept="image/*" capture="environment" style="width:auto;" onchange="ocrInspPhoto()" />'+
+        '<span style="color:#888;font-size:13px;">📷 拍照</span>'+
       '</div>'+
       '<div id="insp-form-odo-preview" style="margin-top:4px;font-size:13px;color:#888;"></div>'+
     '</div>'+
     '<div class="row"><div class="form-group"><label>里程数（公里）<span style="color:#E82337;">*</span></label><input id="insp-form-odo" type="number" min="0" placeholder="OCR 结果或手动输入" style="width:100%;" /></div></div>'+
-    '<div class="form-group"><label>外观照片</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
-    '<div class="form-group"><label>驾驶室照片</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /></div>'+
+    '<div class="form-group"><label>外观（拍照上传）</label><input type="file" id="insp-form-ext-file" accept="image/*" capture="environment" multiple style="width:auto;" /><span style="color:#888;font-size:13px;margin-left:8px;">📷 拍照</span></div>'+
+    '<div class="form-group"><label>驾驶室（拍照上传）</label><input type="file" id="insp-form-cab-file" accept="image/*" capture="environment" multiple style="width:auto;" /><span style="color:#888;font-size:13px;margin-left:8px;">📷 拍照</span></div>'+
     '<div class="form-group"><label>问题描述</label><textarea id="insp-form-issues" rows="3" placeholder="可选，如轮胎气压不足、灯光异常等"></textarea></div>'+
     '<div style="text-align:right;margin-top:16px;">'+
       '<button class="btn btn-secondary" onclick="closeOverlay()">取消</button>'+
@@ -1017,7 +1021,54 @@ async function page_settings(el) {
         <p style="color:#888;font-size:13px;margin-bottom:8px;">上传里程表照片，测试识别效果</p>
         <input type="file" id="ocr-test-file" accept="image/*" style="width:auto;" onchange="ocrTest()" />
         <div id="ocr-test-result" style="margin-top:8px;font-size:14px;"></div>
+      </div>
+      <!-- 全量备份 -->
+      <div class="card" style="margin-top:16px;">
+        <h4 style="margin-top:0;">⏰ 自动备份（全量）</h4>
+        <p style="color:#888;font-size:12px;">备份整个数据库+照片，文件名为 <code>auto-backup-时间.tar.gz</code>，导入前自动预备份。</p>
+        <div class="row">
+          <div class="form-group"><label>备份目录</label><input id="s-bak-dir" value="${sets.BACKUP_DIR || '/vol2/1000/AI/车辆管理-备份'}" style="width:280px;" placeholder="填写完整路径" /></div>
+        </div>
+        <div class="row">
+          <div class="form-group"><label>间隔(小时)</label><input id="s-bak-interval" value="${sets.BACKUP_INTERVAL_HOURS || '24'}" style="width:80px;" /></div>
+          <div class="form-group"><label>保留(个)</label><input id="s-bak-retention" value="${sets.BACKUP_RETENTION || '7'}" style="width:80px;" /></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+            <button class="btn btn-secondary" onclick="saveBackupSettings()" style="font-size:12px;">💾 保存</button>
+          </div>
+        </div>
+        <div id="backup-files" style="margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="doBackup()">📥 下载备份</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('import-file').click()">📤 导入备份</button>
+          <input type="file" id="import-file" accept=".tar.gz,.tgz" style="display:none" onchange="doImportBackup(this)" />
+          <button class="btn btn-secondary" onclick="doAutoFullBackup()">🔄 立即执行</button>
+        </div>
+        <div id="backup-status" style="margin-top:8px;font-size:13px;"></div>
+      </div>
+      <!-- 增量备份 -->
+      <div class="card" style="margin-top:16px;">
+        <h4 style="margin-top:0;">📦 定期增量备份</h4>
+        <p style="color:#888;font-size:12px;">按时间范围导出业务数据（不含照片），导入冲突自动保留最新。</p>
+        <div class="row">
+          <div class="form-group"><label>启用</label>
+            <select id="s-reg-enabled" style="width:80px;"><option value="true" ${sets.REGULAR_BACKUP_ENABLED !== 'false' ? 'selected' : ''}>是</option>
+            <option value="false" ${sets.REGULAR_BACKUP_ENABLED === 'false' ? 'selected' : ''}>否</option></select>
+          </div>
+          <div class="form-group"><label>间隔(小时)</label><input id="s-reg-interval" value="${sets.REGULAR_BACKUP_INTERVAL_HOURS || '168'}" style="width:80px;" title="默认 168h=7天" /></div>
+          <div class="form-group"><label>每次备份(N天内)</label><input id="s-reg-days" value="${sets.REGULAR_BACKUP_DAYS || '30'}" style="width:80px;" /></div>
+          <div style="display:flex;align-items:flex-end;padding-bottom:4px;">
+            <button class="btn btn-secondary" onclick="saveRegBackupSettings()" style="font-size:12px;">💾 保存</button>
+          </div>
+        </div>
+        <div id="reg-backup-files" style="margin-top:8px;"></div>
+        <div style="display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;">
+          <button class="btn btn-primary" onclick="doRegBackup()">📥 导出增量</button>
+          <button class="btn btn-secondary" onclick="document.getElementById('import-reg-file').click()">📤 导入增量</button>
+          <input type="file" id="import-reg-file" accept=".tar.gz,.tgz" style="display:none" onchange="doRegImportBackup(this)" />
+        </div>
+        <div id="reg-backup-status" style="margin-top:6px;font-size:13px;"></div>
       </div>`;
+    setTimeout(function(){ loadBackupFiles(); }, 200);
   } catch(e) { el.innerHTML = `<div class="page-title">⚙️ 系统设置</div><div class="card"><p>加载失败: ${e.message}</p></div>`; }
 }
 async function saveSiteTitle() {
@@ -1059,5 +1110,108 @@ async function ocrTest() {
       document.getElementById('ocr-test-result').innerHTML = '<span style="color:#EF9A9A;">❌ 未识别出有效里程，请换一张照片试试</span>';
     }
   } catch(e) { document.getElementById('ocr-test-result').innerHTML = '<span style="color:#EF9A9A;">请求失败: '+e.message+'</span>'; }
+}
+// ========== 备份功能 ==========
+async function saveBackupSettings() {
+  try {
+    await api('PUT','/api/settings',{key:'BACKUP_DIR',value:document.getElementById('s-bak-dir').value});
+    await api('PUT','/api/settings',{key:'BACKUP_INTERVAL_HOURS',value:document.getElementById('s-bak-interval').value});
+    await api('PUT','/api/settings',{key:'BACKUP_RETENTION',value:document.getElementById('s-bak-retention').value});
+    toast('备份设置已保存，重启后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function saveRegBackupSettings() {
+  try {
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_ENABLED',value:document.getElementById('s-reg-enabled').value});
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_INTERVAL_HOURS',value:document.getElementById('s-reg-interval').value});
+    await api('PUT','/api/settings',{key:'REGULAR_BACKUP_DAYS',value:document.getElementById('s-reg-days').value});
+    toast('增量备份设置已保存，重启后生效');
+  } catch(e) { toast('保存失败: '+e.message,true); }
+}
+async function loadBackupFiles() {
+  try {
+    var d = await api('GET','/api/backup/list');
+    if(!d) return;
+    var files = d.backups || [];
+    var el = document.getElementById('backup-files');
+    if(!el) return;
+    if(files.length===0) { el.innerHTML='<p style="color:#555;font-size:12px;">暂无备份文件</p>'; return; }
+    var h='<table><tr><th>文件名</th><th>大小</th><th>操作</th></tr>';
+    for(var i=0;i<files.length;i++){
+      var f=files[i];
+      var sz = f.size ? (f.size/1024/1024).toFixed(1)+' MB' : '-';
+      h+='<tr><td>'+f.name+'</td><td>'+sz+'</td><td><button class="btn btn-sm btn-primary" onclick="downloadBackup(\''+f.name+'\')">📥</button> <button class="btn btn-sm btn-danger" onclick="deleteBackup(\''+f.name+'\')">🗑️</button></td></tr>';
+    }
+    h+='</table>';
+    el.innerHTML = h;
+  } catch(e) {}
+}
+async function downloadBackup(name) {
+  window.open(BASE+'/api/backup/download/'+encodeURIComponent(name));
+}
+async function deleteBackup(name) {
+  if(!confirm('确认删除 '+name+'?')) return;
+  try {
+    await api('POST','/api/backup/delete/'+encodeURIComponent(name));
+    toast('已删除');
+    loadBackupFiles();
+  } catch(e) { toast('删除失败: '+e.message,true); }
+}
+async function doBackup() {
+  // 直接下载（GET /api/backup/create 返回文件流）
+  window.open(BASE+'/api/backup/create');
+}
+async function doAutoFullBackup() {
+  var btn = event.target;
+  btn.disabled = true;
+  document.getElementById('backup-status').innerHTML = '<span style="color:#888;">执行中...</span>';
+  try {
+    var d = await api('POST','/api/backup/trigger-auto');
+    if(d && d.path) toast('自动备份完成: '+d.path.split('/').pop());
+    else toast('自动备份已触发');
+    loadBackupFiles();
+    document.getElementById('backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  btn.disabled = false;
+}
+async function doImportBackup(input) {
+  if(!input || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  if(!confirm('导入前将自动创建当前备份。确定导入 '+file.name+' 吗?')) return;
+  var fd = new FormData();
+  fd.append('file',file);
+  document.getElementById('backup-status').innerHTML = '<span style="color:#888;">导入中...</span>';
+  try {
+    var d = await fetch(BASE+'/api/backup/import',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+    var r = await d.json();
+    if(d.ok) { toast('导入成功'); loadBackupFiles(); }
+    else throw new Error(r.detail||'导入失败');
+    document.getElementById('backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  input.value='';
+}
+async function doRegBackup() {
+  var days = document.getElementById('s-reg-days')?.value || 30;
+  document.getElementById('reg-backup-status').innerHTML = '<span style="color:#888;">导出中...</span>';
+  try {
+    var d = await api('POST','/api/backup/regular/create?days='+days);
+    if(d && d.path) toast('增量备份完成: '+d.path.split('/').pop());
+    document.getElementById('reg-backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('reg-backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+}
+async function doRegImportBackup(input) {
+  if(!input || !input.files || !input.files[0]) return;
+  var file = input.files[0];
+  var fd = new FormData();
+  fd.append('file',file);
+  document.getElementById('reg-backup-status').innerHTML = '<span style="color:#888;">导入中...</span>';
+  try {
+    var d = await fetch(BASE+'/api/backup/regular/import',{method:'POST',headers:{'Authorization':'Bearer '+TOKEN},body:fd});
+    var r = await d.json();
+    if(d.ok) toast('增量导入成功');
+    else throw new Error(r.detail||'导入失败');
+    document.getElementById('reg-backup-status').innerHTML = '';
+  } catch(e) { document.getElementById('reg-backup-status').innerHTML = '<span style="color:#EF9A9A;">失败: '+e.message+'</span>'; }
+  input.value='';
 }
 </script></body></html>

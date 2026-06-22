@@ -22,6 +22,12 @@ SETTING_KEYS = {
     "MILEAGE_THRESHOLD": "里程预警阈值(km)",
     "DB_DIR": "数据库目录",
     "UPLOAD_DIR": "照片目录",
+    "BACKUP_DIR": "备份目录",
+    "BACKUP_INTERVAL_HOURS": "自动备份间隔(小时)",
+    "BACKUP_RETENTION": "自动备份保留数量",
+    "REGULAR_BACKUP_ENABLED": "增量备份启用",
+    "REGULAR_BACKUP_INTERVAL_HOURS": "增量备份间隔(小时)",
+    "REGULAR_BACKUP_DAYS": "增量备份天数",
 }
 
 class SiteTitleResp(BaseModel):
