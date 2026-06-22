@@ -77,15 +77,6 @@ async def run_regular_backup(data_dir: Path, days: int = 30) -> Path | None:
     """执行一次定期增量备份（按天数范围导出数据）"""
     try:
         from routers.regular_backup import REGULAR_MAGIC, VERSION, TABLE_CONF, _obj_to_dict
-        from models.user import User, Group
-        from models.vehicle import Vehicle
-        from models.inspection import Inspection
-        from models.repair import Repair
-        from models.repair_flow import RepairFlow
-        from models.contract import Contract
-        from models.contract_part import ContractPart
-        from models.role import Role, RolePermission
-        from models.operation_log import OperationLog
         from sqlalchemy.ext.asyncio import AsyncSession
         from sqlalchemy import select
         from database import get_db, SessionLocal

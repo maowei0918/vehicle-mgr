@@ -11,7 +11,7 @@ from database import get_db
 from models.user import User, Group
 from models.vehicle import Vehicle
 from models.inspection import Inspection
-from models.repair import Repair
+from models.repair import RepairOrder, RepairDetail, WarrantyAlert
 from models.repair_flow import RepairFlow
 from models.contract import Contract
 from models.contract_part import ContractPart
@@ -33,7 +33,9 @@ TABLE_CONF = [
     ("users",          User,          "created_at", True),
     # 业务数据（按时间范围导出）
     ("inspections",    Inspection,    "created_at", False),
-    ("repairs",        Repair,        "created_at", False),
+    ("repairs",        RepairOrder,   "created_at", False),
+    ("repair_details", RepairDetail,  "created_at", False),
+    ("warranty_alerts", WarrantyAlert, "created_at", False),
     ("repair_flows",   RepairFlow,    "created_at", False),
     ("contracts",      Contract,      "created_at", False),
     ("contract_parts", ContractPart,  "created_at", False),
