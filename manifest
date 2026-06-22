@@ -1,5 +1,5 @@
 appname               = vehicle-mgr
-version               = 1.0.3
+version               = 1.0.4
 display_name          = 车辆管理系统
 desc                  = 车辆管理系统，支持车辆档案、日检记录、维修记录、人员分组管理。<br>配套微信小程序使用，提供 Web 管理后台。
 platform              = arm
